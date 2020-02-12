@@ -1,6 +1,18 @@
 module CH9 where
 
+splitListOn :: (a -> Bool) -> [a] -> [[a]]
+splitListOn _ [] = []
+splitListOn cond l = takeWhile cond l : (splitListOn cond . drop 1 . dropWhile cond) l
+
+splitLineOnChar :: [Char] -> [[Char]]
+splitLineOnChar [] = []
+splitLineOnChar line = takeWhile (/=' ') line  : (splitLineOnChar . drop 1 . dropWhile (/=' ')) line
+
+splitLineOnGivenChar :: Char -> [Char] -> [[Char]]
+splitLineOnGivenChar c = splitListOn (/=c)
+
 -- TODO
+-- :i (:) what is it? infix operator?
 
 -- List comprehensions
  
