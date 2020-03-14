@@ -9,13 +9,32 @@ myFoldl _ b [] = b
 myFoldl f b (x:xs) = myFoldl f (f b x) xs
 
 myAnd :: [Bool] -> Bool
-myAnd = foldr (\a b -> if a == False then False else b) True
+myAnd = foldr (\x acc -> if acc == False then False else x) True
+myAnd' :: [Bool] -> Bool
+myAnd' = foldl (\acc x -> if acc == False then False else x) True
 
 myOr :: [Bool] -> Bool
-myOr = foldr (\a b -> if a == True then True else b) False
+myOr = foldr (\x acc -> if acc == True then True else x) False
+myOr' :: [Bool] -> Bool
+myOr' = foldr (\acc x -> if acc == True then True else x) False
+
 
 myAny :: (a -> Bool) -> [a] -> Bool
-myAny f = foldr (\a b -> if f a then True else b) False
+myAny f = foldr (\x acc -> f x || acc) False
+
+myElem :: Eq a => a -> [a] -> Bool
+myElem y = foldr (\x acc -> x == y || acc) False
+myElemAny :: Eq a => a -> [a] -> Bool
+myElemAny y = myAny (== y)
+
+myReverse :: [a] -> [a]
+myReverse = foldr (\x acc -> acc ++ [x]) []
+
+-- TODO
+myReverse' :: [a] -> [a]
+myReverse' = foldl (\acc x -> x:acc) []
+
+
 
 --myElem :: Eq a => a -> [a] -> Bool
-
+--myElem y = foldr (\x acc -> if y == x then True else acc) False
