@@ -30,11 +30,46 @@ myElemAny y = myAny (== y)
 myReverse :: [a] -> [a]
 myReverse = foldr (\x acc -> acc ++ [x]) []
 
--- TODO
 myReverse' :: [a] -> [a]
-myReverse' = foldl (\acc x -> x:acc) []
+myReverse' = foldl (flip (:)) []
+
+myMap :: (a -> b) -> [a] -> [b]
+myMap f = foldr ((:) . f) []
+
+myMap' :: (a -> b) -> [a] -> [b]
+myMap' f = foldl (flip ((:) . f)) []
+
+myFilter :: (a -> Bool) -> [a] -> [a]
+myFilter f = foldl (\acc x -> if f x then acc ++ [x] else acc) []
+
+mySquish :: [[a]] -> [a]
+mySquish = foldr (++) []
+mySquish' :: [[a]] -> [a]
+mySquish'  = foldl (++) []
+
+mySquishMap :: (a -> [b]) -> [a] -> [b]
+--mySquishMap f = foldl (flip (flip (++) . f)) []
+mySquishMap f = foldl (\acc x -> acc ++ f x) []
+
+mySquishMap' :: (a -> [b]) -> [a] -> [b]
+mySquishMap' f = foldr ((++) . f) []
+
+squishAgain :: [[a]] -> [a]
+squishAgain = mySquishMap id
 
 
+myMaximumBy :: (a -> a -> Ordering) -> [a] -> a
+myMaximumBy _ [] = error "empty list"
+myMaximumBy f (x:xs) = foldr combF x xs
+  where
+    combF y acc = if f y acc == GT then y else acc
 
---myElem :: Eq a => a -> [a] -> Bool
---myElem y = foldr (\x acc -> if y == x then True else acc) False
+myMinimumBy :: (a -> a -> Ordering) -> [a] -> a
+myMinimumBy _ [] = error "empty list"
+myMinimumBy f (x:xs) = foldr combF x xs
+  where
+    combF y acc = if f y acc == LT then y else acc
+
+
+myMinimumBy' _ [] = error "empty list"
+myMinimumBy' f (x:xs) = foldl (\acc x -> if f x acc == LT then x else acc) x xs
