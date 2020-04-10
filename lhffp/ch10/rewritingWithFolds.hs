@@ -68,7 +68,7 @@ myMinimumBy :: (a -> a -> Ordering) -> [a] -> a
 myMinimumBy _ [] = error "empty list"
 myMinimumBy f (x:xs) = foldr combF x xs
   where
-    combF y acc = if f y acc == LT then y else acc
+    combF y acc = if f ny acc == LT then y else acc
 
 
 myMinimumBy' _ [] = error "empty list"

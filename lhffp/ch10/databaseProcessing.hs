@@ -24,6 +24,11 @@ filterDbDate [] = []
 filterDbDate (DbDate utctime:xs) = utctime : filterDbDate xs
 filterDbDate (_:xs) = filterDbDate xs
 
+filterDbDate = foldr f []
+  where
+    f (DbDate x) xs = x : xs
+    f _ xs = xs
+
 filterDbNumber :: [DatabaseItem] -> [Integer]
 filterDbNumber [] = []
 filterDbNumber (DbNumber n:xs) = n : filterDbNumber xs
