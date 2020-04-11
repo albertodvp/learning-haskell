@@ -1,20 +1,15 @@
-module BubbleSort where
+step :: Ord a => [a] -> [a]
+step [] = []
+step [x] = [x]
+step (x:xs)
+  | x > head xs = head xs : step (x:tail xs)
+  | otherwise = x:step xs
+
+bubbleSort :: Ord a => [a] -> [a]
+bubbleSort xs = foldl (\acc _ -> step acc) xs xs
+l = [2,3, 1, 0, -14, 3, 1, 45, 6, 4, 2, 2, 10, 4, -34, 3, 1]
+
+-- >>> bubbleSort l
+-- [-34,-14,0,1,1,1,2,2,2,3,3,3,4,4,6,10,45]
 
 
-foldLeftF :: Ord a => ([a], Integer) -> a -> ([a], Integer)
-foldLeftF ([], 0) x = ([x], 0)
-foldLeftF (l, s) x = if t>x then (reverse (t:x:tail (reverse l)), s+1) else (reverse (x:(reverse l)), s)
-  where t = head $ reverse l
-
-
-sortOnce :: Ord a => [a]-> ([a], Integer)
-sortOnce = foldl foldLeftF ([], 0)
-
-l = [11,1,3,2,4,5,10]
-
-bubbleFoldF :: Ord a => ([a], Integer) -> Integer -> ([a], Integer)
-bubbleFoldF (acc, s) _ = (a, s+ss)
-  where
-    (a,ss) = sortOnce acc
-bubbleSort :: Ord a => [a] -> ([a], Integer)
-bubbleSort l = foldl bubbleFoldF (l,0) [1..fromIntegral (length l)]
