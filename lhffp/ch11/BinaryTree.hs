@@ -82,5 +82,21 @@ main = do
   testPostorder
 
 
-foldTree :: (a -> b -> b) -> b -> BinaryTree a -> b
-foldTree f b tree = foldr f b (inorder tree)
+-- foldr
+foldr' :: (a -> b -> b) -> b -> [a] -> b
+foldr' _ b [] = b
+foldr' f b (x:xs) = f x $ foldr' f b xs
+
+foldrTree :: (a -> b -> b) -> b -> BinaryTree a -> b
+foldrTree _ b Leaf = b
+foldrTree f b (Node l a r) = a `f` foldrTree f (foldrTree f b l) r
+
+
+-- foldr
+foldl' :: (b -> a -> b) -> b -> [a] -> b
+foldl' _ b [] = b
+foldl' f b (x:xs) = foldl' f (f b x) xs
+
+foldlTree :: (b -> a -> b) -> b -> BinaryTree a -> b
+foldlTree _ b Leaf = b
+foldlTree f b (Node l a r) = foldlTree f (foldlTree f b l `f` a) r
