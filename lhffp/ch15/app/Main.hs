@@ -1,6 +1,5 @@
 module Main where
-
-import MyLib
+import Test.QuickCheck
 
 main :: IO ()
 main = do
