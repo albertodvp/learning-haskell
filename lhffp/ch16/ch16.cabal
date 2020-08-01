@@ -1,0 +1,27 @@
+name:                ch16
+version:             0.1.0.0
+-- synopsis:
+-- description:
+license:             BSD3
+license-file:        LICENSE
+author:              Alberto Fanton
+maintainer:          alberto.fanton@protonmail.com
+copyright:           Copyright (c) 2020 Alberto Fanton
+category:            Learning Haskell
+build-type:          Simple
+extra-source-files:  README.md
+cabal-version:       >=1.10
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     Lib
+  build-depends:       base >= 4.7 && < 5, QuickCheck
+  default-language:    Haskell2010
+
+test-suite tests
+  type: exitcode-stdio-1.0
+  main-is: Test.hs
+  hs-source-dirs: test
+  build-depends: base >= 4.7 && < 5, QuickCheck, ch16
+  default-language: Haskell2010
+        
