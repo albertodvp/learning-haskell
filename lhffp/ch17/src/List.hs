@@ -9,7 +9,6 @@ instance Functor List where
   fmap _ Nil = Nil
   fmap f (Cons a as) = Cons (f a) (fmap f as)
 
-
 append :: List a -> List a -> List a
 append Nil xs = xs
 append (Cons x xs) ys = Cons x  $ xs `append` ys
@@ -26,30 +25,26 @@ flatMap :: (a -> List b)
         -> List b
 flatMap f = concat' . fmap f
 
+take' :: Int -> List a -> List a
+take' 0 _ = Nil
+take' _ Nil = Nil
+take' i (Cons x xs) = Cons x $ take' (i-1) xs
+
+repeat' :: a -> List a
+repeat' a = Cons a $ repeat' a
+
+zipWith' :: (a -> b -> c) -> List a -> List b -> List c
+zipWith' f (Cons x xs) (Cons y ys) = Cons (f x y) $ zipWith' f xs ys
+zipWith' _ Nil _ = Nil
+zipWith' _ _ Nil = Nil
+                        
 
 instance Applicative List where
   pure = flip Cons Nil
-  --  (<*>) :: List (a -> b) -> List a -> List b
--- 0
---  (<*>) (Cons f fs) cons = (f <$> cons) `append` (fs <*> cons)
---  (<*>) Nil _ = Nil
+  (<*>) fs xs = flatMap (<$> xs) fs
 
--- 1
---  (<*>) fs xs = concat' $ fmap (`fmap` xs) fs
-
--- 2 -- !!! I AM CHANING THE ORDER HERE 2 TO 4 ARE WRONG
---  (<*>) fs xs = concat' $ fmap (\x -> flip fmap fs ($ x)) xs
-
--- 3 
---  (<*>) fs = concat' . fmap (flip fmap fs . flip ($))
-
--- 4 
---  (<*>) fs = flatMap $ (`fmap` fs) . flip ($)
-
-
--- 5
-  -- fold :: (a -> b) -> b -> List a -> b
-  -- flatMap :: (a -> List b) -> List a -> List b
-  (<*>) fs xs = flatMap fapp fs
-    where
-      fapp f = fold (Cons . f) Nil xs
+instance Semigroup a => Semigroup (List a) where
+  (<>) = append
+  
+instance Monoid a => Monoid (List a) where
+  mempty = Nil
