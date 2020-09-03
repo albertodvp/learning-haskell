@@ -40,6 +40,13 @@ instance (Arbitrary a, Arbitrary b) => Arbitrary (Two a b) where
     b <- arbitrary
     return $ Two a b
 
+instance (Arbitrary a, Arbitrary b) => Arbitrary (Three' a b) where
+  arbitrary = do
+    a <- arbitrary
+    b <- arbitrary
+    b' <- arbitrary
+    return $ Three' a b b'
+    
 instance Eq a => EqProp (List a) where
   xs =-= ys = xs' `eq` ys'
     where
@@ -63,7 +70,9 @@ instance (Eq a, Eq b) => EqProp (Two a b) where
 
 instance (Eq a, Eq b, Eq c) => EqProp (Three a b c) where
   (=-=) = eq
-
+  
+instance (Eq a, Eq b) => EqProp (Three' a b ) where
+  (=-=) = eq
 
 main :: IO ()
 main = do
@@ -81,3 +90,6 @@ main = do
   quickBatch $ applicative (undefined :: Two (Sum Int) (String, Char, Integer))
   quickBatch $ functor (undefined :: Three (Sum Int) String (String, Char, Integer))
   quickBatch $ applicative (undefined :: Three (Sum Int) String (String, Char, Integer))
+  quickBatch $ functor (undefined :: Three' (Sum Int) (String, Char, Integer))
+  quickBatch $ applicative (undefined :: Three' (Sum Int) (String, Char, Integer))
+  

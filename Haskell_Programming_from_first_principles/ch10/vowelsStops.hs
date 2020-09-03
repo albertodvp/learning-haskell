@@ -17,7 +17,7 @@ combs' stops vowels= [ [x,y,z] |
                        x == 'p']
 
 nouns = ["cat", "dog", "mouse"]
-verbs = ["eat, "kill"]
+verbs = ["eat", "kill"]
 
 
 type Sentence = [String]

@@ -1,5 +1,8 @@
 module FinalExs where
 
+
+import Control.Applicative (liftA3)
+
 data Pair a = Pair a a deriving (Show, Eq)
 
 instance Functor Pair  where
@@ -34,3 +37,23 @@ instance (Monoid a, Monoid b) => Applicative (Three a b) where
   (<*>) (Three a b f) (Three a' b' x) =
     Three (a<>a') (b<>b') (f x)
   
+--
+
+data Three' a b = Three' a b b deriving (Eq, Show)
+
+instance Functor (Three' a) where
+  fmap f (Three' a b b') = Three' a (f b) (f b')
+
+
+instance Monoid a => Applicative (Three' a) where
+  pure b = Three' mempty b b
+  (<*>) (Three' a f g) (Three' a' x y) = Three' (a<>a') (f x) (g y) 
+  
+stops :: String
+stops = "pdtdkg"
+
+vowels :: String
+vowels = "aeiou"
+
+combos :: [a] -> [b] -> [c] -> [(a, b, c)]
+combos = liftA3 (,,)
