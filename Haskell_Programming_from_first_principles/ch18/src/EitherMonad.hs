@@ -1,5 +1,7 @@
 module EitherMonad where
 
+import Control.Monad
+
 type Founded = Int
 
 type Coders = Int
@@ -43,3 +45,25 @@ mkSoftware years coders = do
     then Left $ TooManyCodersForYears f p
     else Right $ Shop f p 
   
+data Sum a b =
+    First a
+  | Second b
+  deriving (Eq, Show)
+
+instance Functor (Sum a) where
+  fmap _ (First a)  = First a
+  fmap f (Second b) = Second $ f b
+
+instance Applicative (Sum a) where
+  pure = Second
+  (<*>) (First f)  _  = First f
+  (<*>) (Second f) sa = fmap f sa
+
+
+
+instance Monad (Sum a) where
+  return = pure
+  -- (>>=) :: Monad m => m a -> (a -> m b) -> m b
+  (>>=) (First a) _ = First a
+  (>>=) (Second a) sf = sf a
+
