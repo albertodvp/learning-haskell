@@ -60,20 +60,38 @@ instance Monad Identity where
 data List a = Nil | Cons a (List a) deriving (Eq, Show)
 
 instance Functor List where
-  fmap _ Nil = Nil
-  fmap f (Cons a xs) = Cons (f a) (fmap f xs)
+  fmap _ Nil             = Nil
+  fmap f (Cons a xs)     = Cons (f a) (fmap f xs)
+
+append :: List a -> List a -> List a
+append Nil         ys   = ys
+append (Cons x xs) ys   = Cons x $ xs `append` ys
+
+-- concat' :: List (List a) -> List a
+-- concat' Nil             = Nil
+-- concat' (Cons x xs)     = append x (concat' xs)
+
+fold :: (b -> a -> b) -> b -> List a -> b
+fold _ b Nil            = b
+fold f b (Cons x xs)    = fold f (f b x) xs
 
 concat' :: List (List a) -> List a
-concat' = undefined
+concat' = fold append Nil
+
+flatMap :: (a -> List b) -> List a -> List b
+flatMap f = concat' . fmap f
 
 instance Applicative List where
   pure = flip Cons Nil
+  -- (<*>) :: List (a -> b) -> List a -> List b
   Nil       <*> _   = Nil
   _         <*> Nil = Nil
-  Cons f fs <*> xs  = concat' $ Cons (fmap f xs) (fs <*> xs)
+  --  Cons f fs <*> xs  = (f <$> xs) `append` (fs <*> xs)
+  fs <*> xs = flatMap (<$> xs) fs
 
 instance Monad List where
   return = pure
   Nil >>= _ = Nil
-  (Cons x xs) >>= f = concat' $ Cons (f x) (fmap f xs)
+  -- (>>=) :: List a -> (a -> List b) -> List b
+  xs >>= f = concat' $ f <$> xs
   

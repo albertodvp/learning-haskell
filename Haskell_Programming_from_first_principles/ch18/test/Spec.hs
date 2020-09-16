@@ -105,5 +105,7 @@ main = do
   putStrLn ""
   putStrLn "List"
   quickBatch $ functor l
+  quickBatch $ applicative l
+  quickBatch $ monad l
 
 
