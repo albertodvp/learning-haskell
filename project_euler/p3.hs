@@ -2,18 +2,18 @@ module P3 where
 
 import Data.List (find)
 
-divBy :: Integer -> Integer -> Bool
-divBy x = (==0) . (rem x)
-
-factors :: Integer -> [Integer]
-factors x = filter (divBy x) [1..x]
-
 isPrime :: Integer -> Bool
-isPrime x = not $ any (divBy x) [2..x-1]
+isPrime x = not $ any ((==0) . rem x) [2..x-1]
+
+divsSupp :: Integer -> Integer -> [Integer]
+divsSupp _   1 = []
+divsSupp d n = case rem n d of
+  0 -> d : (divsSupp d (n `quot` d))
+  _ -> divsSupp (d+1) n
 
 
-primeFactors :: Integer -> [Integer]
-primeFactors = filter isPrime . factors
+divs :: Integer -> [Integer]
+divs n= 1:(divsSupp 2 n)
 
 p3 :: Integer
-p3 = head $ reverse $ primeFactors 600851475143
+p3 = head $ reverse $ divs 600851475143
