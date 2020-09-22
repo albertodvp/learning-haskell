@@ -17,4 +17,4 @@ executable ch19
   hs-source-dirs:      src
   main-is:             MainScotty.hs
   default-language:    Haskell2010
-  build-depends:       base >= 4.7 && < 5, scotty
+  build-depends:       base >= 4.7 && < 5, scotty, time, text, uuid
