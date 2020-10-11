@@ -31,13 +31,33 @@ instance Arbitrary a => Arbitrary (BinL a) where
    
 instance Eq a => EqProp (BinL a) where
   b1 =-= b2 = b1 `eq` b2
-    
 
+-- Rose
+instance Arbitrary a => Arbitrary (Rose a) where
+  arbitrary = frequency [
+    (4, liftA LeafRose arbitrary),
+    (1, liftA Rose arbitrary)
+    ]
+    
+instance Eq a => EqProp (Rose a) where
+  r1 =-= r2 = x `eq` y
+    where
+      takeRose (Rose rs) = Rose $ take 3000 rs
+      takeRose lr = lr
+      x = takeRose r1
+      y = takeRose r2
+
+        
 main :: IO()
 main = do
-  -- quickBatch $ functor (undefined :: Cmp Maybe (Either String) (Int, String, Char) )
-  -- quickBatch $ applicative (undefined :: Cmp Maybe (Either String) (Int, String, Char) )
+  putStr "Compare"
+  quickBatch $ functor (undefined :: Cmp Maybe (Either String) (Int, String, Char) )
+  quickBatch $ applicative (undefined :: Cmp Maybe (Either String) (Int, String, Char) )
+  putStr "Bin"
   quickBatch $ functor (undefined :: Bin (Int, String, Char) )
   quickBatch $ applicative (undefined :: Bin (Int, String, Char) )
+  putStr "BinL"
   quickBatch $ functor (undefined :: BinL (Int, String, Char) )
   quickBatch $ applicative (undefined :: BinL (Int, String, Char) )
+  putStr "Rose"
+--  quickBatch $ functor (undefined :: Rose (Int, String, Char) )
