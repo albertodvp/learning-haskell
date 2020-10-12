@@ -1,9 +1,10 @@
 module Lib where
 
+import Control.Applicative (liftA2)
 -- ZipList
 newtype ZL a = ZL { getZL :: [a] } deriving (Eq, Show)
 
--- Compose TODO
+-- Compose
 newtype Cmp f g a = Cmp { getCmp :: f (g a) } deriving (Eq, Show)
 
 instance (Functor f, Functor g) => Functor (Cmp f g) where
@@ -11,11 +12,8 @@ instance (Functor f, Functor g) => Functor (Cmp f g) where
 
 instance (Applicative f, Applicative g) => Applicative (Cmp f g) where
   pure = Cmp . pure . pure
-  (Cmp fgf) <*> (Cmp fga) = Cmp $ fgf <*> fga
-    where
-      f :: g a  -> g b
-      -- fgf :: f (g (a -> b))
-      f gf = undefined
+  (Cmp fgf) <*> (Cmp fga) = Cmp $  liftA2 (<*>) fgf fga
+
 -- Bin
 data Bin a = Leaf a | Bin (Bin a) (Bin a) deriving (Eq, Show)
 
@@ -25,12 +23,12 @@ instance Functor Bin where
 
 instance Applicative Bin where
   pure = Leaf
-  (Leaf f) <*> (Leaf a) = Leaf $ f a
   (Leaf f) <*> baa = f <$> baa
+  (Bin bf bg) <*> la@(Leaf _) = Bin (bf <*> la) (bg <*> la)
   (Bin bf bg) <*> (Bin ba bb) = Bin (bf <*> ba) (bg <*> bb)
-  (Bin bf bg) <*> (Leaf a) = Bin (bf <*> Leaf a) (bg <*> Leaf a)
+
   
--- BinL TODO
+-- BinL
 data BinL a = BinL a (BinL a) (BinL a) | LeafL deriving (Eq, Show)
 
 instance Functor BinL where
@@ -39,19 +37,23 @@ instance Functor BinL where
 
 instance Applicative BinL where
   pure a = BinL a LeafL LeafL
-  _ <*> LeafL = LeafL
   LeafL <*> _ = LeafL
-  BinL f LeafL blg <*> bl = BinL f (BinL f LeafL LeafL) blg <*> bl
-  BinL f blf LeafL <*> bl = BinL f blf (BinL f LeafL LeafL) <*> bl
-  (BinL f blf blg) <*> (BinL a bla blb) = BinL (f a) (blf <*> bla) (blg <*> blb)
-  
+  _ <*> LeafL = LeafL
+  BinL f LeafL LeafL <*> BinL a bla blb = BinL (f a) (f <$> bla) (f <$> blb)
+  BinL f blf blg <*> BinL a LeafL LeafL = BinL (f a) (($ a) <$> blf) (($ a) <$> blg)
+  BinL f blf LeafL <*> BinL a bla blb = BinL (f a) (blf <*> bla) (f <$> blb)
+  BinL f LeafL blg <*> BinL a bla blb = BinL (f a) (f <$> bla) (blg <*> blb)
+  BinL f blf blg <*> BinL a LeafL blb = BinL (f a) (blf <*> blb) (blg <*> blb)
+  BinL f blf blg <*> BinL a bla LeafL = BinL (f a) (blf <*> bla) (blg <*> bla)
+  BinL f blf blg <*> BinL a bla blb = BinL (f a) (blf <*> bla) (blg <*> blb)
+
 
 -- Rose
 data Rose a = Rose [Rose a] | LeafRose a deriving (Eq, Show)
 
 instance Functor Rose where
   fmap f (LeafRose a) = LeafRose $ f a
-  fmap f (Rose xs) = Rose $ fmap (f <$>)  xs
+  fmap f (Rose xs) = Rose $ (f <$>) <$>  xs
 
 instance Applicative Rose where
   pure = LeafRose
@@ -62,5 +64,43 @@ instance Applicative Rose where
 -- RoseL
 data RoseL a = RoseL a [RoseL a] deriving (Eq, Show)
 
+instance Functor RoseL where
+  fmap f (RoseL a []) = RoseL (f a) []
+  fmap f (RoseL a rs) = RoseL (f a) (fmap (fmap f) rs)
 
--- (*>) and (<*)
+instance Applicative RoseL where
+  pure a = RoseL a []
+  RoseL f [] <*> RoseL a xs = RoseL (f a) $ (f <$>) <$> xs
+  RoseL f rfs <*> RoseL a xs = RoseL (f a) (liftA2 (<*>) rfs xs)
+
+-- Reader
+
+newtype Reader r a  = Reader {runReader :: r -> a} deriving (Functor)
+
+instance Applicative (Reader r) where
+  pure = Reader . const
+  (Reader rf) <*> (Reader rx) = Reader $ rf <*> rx
+  
+    
+-- State
+
+newtype State s a = State {runState :: s -> (a, s)} deriving (Functor)
+
+instance Applicative (State s) where
+  pure = State . (,)
+  State sfab <*> State sa = State $ (\s -> let (fab, s') = sfab s in
+                                           let (a, s'') = sfab s' in
+                                             (fab a, s''))
+
+-- Writer
+
+newtype Writer w a = Writer {runWriter :: (a, w)} deriving (Functor)
+
+instance Monoid w => Applicative (Writer w) where
+  pure x = (x, mempty)
+
+
+
+
+
+

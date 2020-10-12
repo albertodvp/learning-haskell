@@ -4,13 +4,14 @@ import Test.QuickCheck
 import Test.QuickCheck.Checkers
 import Test.QuickCheck.Classes
 import Control.Applicative (liftA, liftA2, liftA3)
+
 -- Cmp
+-- instance Arbitrary (Cmp f g a) where
+--   arbitrary = pure <$> arbitrary
 
-instance Arbitrary (Cmp f g a) where
-  arbitrary = undefined
+-- instance EqProp (Cmp f g a) where
+--   a =-= b = a `eq` b
 
-instance EqProp (Cmp f g a) where
-  (=-=) (Cmp fga) (Cmp fgb) = undefined
 
 -- Bin
 instance Arbitrary a => Arbitrary (Bin a) where
@@ -35,8 +36,8 @@ instance Eq a => EqProp (BinL a) where
 -- Rose
 instance Arbitrary a => Arbitrary (Rose a) where
   arbitrary = frequency [
-    (4, liftA LeafRose arbitrary),
-    (1, liftA Rose arbitrary)
+    (10, liftA LeafRose arbitrary),
+    (1, liftA Rose $ frequency [(1, arbitrary), (10, return [])])
     ]
     
 instance Eq a => EqProp (Rose a) where
@@ -47,17 +48,36 @@ instance Eq a => EqProp (Rose a) where
       x = takeRose r1
       y = takeRose r2
 
-        
+-- RoseL
+instance Arbitrary a => Arbitrary (RoseL a) where
+  arbitrary = frequency [
+      (100, flip RoseL [] <$> arbitrary),
+      (1, liftA2 RoseL arbitrary arbitrary)
+      ]
+
+instance Eq a => EqProp (RoseL a) where
+  r1 =-= r2 = x `eq` y
+    where
+      takeRose (RoseL a rs) = RoseL a $ take 3000 rs
+      x = takeRose r1
+      y = takeRose r2
+
+
+              
 main :: IO()
 main = do
-  putStr "Compare"
-  quickBatch $ functor (undefined :: Cmp Maybe (Either String) (Int, String, Char) )
-  quickBatch $ applicative (undefined :: Cmp Maybe (Either String) (Int, String, Char) )
-  putStr "Bin"
+  putStr "\n\n-- Compare (TODO) --\n"
+  -- quickBatch $ functor (undefined :: Cmp Maybe (Either String) (Int, String, Char) )
+  -- quickBatch $ applicative (undefined :: Cmp Maybe (Either String) (Int, String, Char) )
+  putStr "\n\n-- Bin --\n"
   quickBatch $ functor (undefined :: Bin (Int, String, Char) )
   quickBatch $ applicative (undefined :: Bin (Int, String, Char) )
-  putStr "BinL"
+  putStr "\n\n-- BinL --\n"
   quickBatch $ functor (undefined :: BinL (Int, String, Char) )
   quickBatch $ applicative (undefined :: BinL (Int, String, Char) )
-  putStr "Rose"
---  quickBatch $ functor (undefined :: Rose (Int, String, Char) )
+  putStr "\n\n-- Rose --\n"
+  quickBatch $ functor (undefined :: Rose (Int, String, Char) )
+  quickBatch $ applicative (undefined :: Rose (Int, String, Char) )
+  putStr "\n\n-- RoseL --\n"
+--  quickBatch $ functor (undefined :: RoseL (Int, String, Char) )
+--  quickBatch $ applicative (undefined :: RoseL (Int, String, Char) )
