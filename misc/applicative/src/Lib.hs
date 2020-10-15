@@ -1,3 +1,5 @@
+{-# LANGUAGE DeriveFunctor #-}
+
 module Lib where
 
 import Control.Applicative (liftA2)
@@ -70,8 +72,7 @@ instance Functor RoseL where
 
 instance Applicative RoseL where
   pure a = RoseL a []
-  RoseL f [] <*> RoseL a xs = RoseL (f a) $ (f <$>) <$> xs
-  RoseL f rfs <*> RoseL a xs = RoseL (f a) (liftA2 (<*>) rfs xs)
+  RoseL f rfs <*> r@(RoseL x rxs) = RoseL (f x) $ ((f <$>) <$> rxs) <> ((<*> r) <$> rfs)
 
 -- Reader
 
@@ -79,25 +80,26 @@ newtype Reader r a  = Reader {runReader :: r -> a} deriving (Functor)
 
 instance Applicative (Reader r) where
   pure = Reader . const
-  (Reader rf) <*> (Reader rx) = Reader $ rf <*> rx
+  Reader rf <*> Reader rx = Reader $ rf <*> rx
+
   
-    
 -- State
 
 newtype State s a = State {runState :: s -> (a, s)} deriving (Functor)
 
 instance Applicative (State s) where
   pure = State . (,)
-  State sfab <*> State sa = State $ (\s -> let (fab, s') = sfab s in
-                                           let (a, s'') = sfab s' in
-                                             (fab a, s''))
+  State sf <*> State sa  = State (\s -> let (f, s') = sf s in
+                                        let (a, s'') = sa s' in
+                                        (f a, s''))
 
--- Writer
+-- -- Writer
 
-newtype Writer w a = Writer {runWriter :: (a, w)} deriving (Functor)
+newtype Writer w a = Writer {runWriter :: (a, w)} deriving (Functor, Show)
 
 instance Monoid w => Applicative (Writer w) where
-  pure x = (x, mempty)
+  pure = Writer . flip (,) mempty
+  Writer (f, w) <*> Writer (x, w') = Writer (f x, w <> w')
 
 
 

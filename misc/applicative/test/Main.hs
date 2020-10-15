@@ -6,11 +6,11 @@ import Test.QuickCheck.Classes
 import Control.Applicative (liftA, liftA2, liftA3)
 
 -- Cmp
--- instance Arbitrary (Cmp f g a) where
---   arbitrary = pure <$> arbitrary
+instance (Applicative f, Applicative g, Arbitrary a) => Arbitrary (Cmp f g a) where
+  arbitrary = pure <$> arbitrary
 
--- instance EqProp (Cmp f g a) where
---   a =-= b = a `eq` b
+instance Eq (f (g a)) => EqProp (Cmp f g a) where
+  a =-= b = a `eq` b
 
 
 -- Bin
@@ -62,13 +62,12 @@ instance Eq a => EqProp (RoseL a) where
       x = takeRose r1
       y = takeRose r2
 
-
               
 main :: IO()
 main = do
-  putStr "\n\n-- Compare (TODO) --\n"
-  -- quickBatch $ functor (undefined :: Cmp Maybe (Either String) (Int, String, Char) )
-  -- quickBatch $ applicative (undefined :: Cmp Maybe (Either String) (Int, String, Char) )
+  putStr "\n\n-- Compare --\n"
+  quickBatch $ functor (undefined :: Cmp Maybe (Either String) (Int, String, Char) )
+  quickBatch $ applicative (undefined :: Cmp Maybe (Either String) (Int, String, Char) )
   putStr "\n\n-- Bin --\n"
   quickBatch $ functor (undefined :: Bin (Int, String, Char) )
   quickBatch $ applicative (undefined :: Bin (Int, String, Char) )
@@ -79,5 +78,5 @@ main = do
   quickBatch $ functor (undefined :: Rose (Int, String, Char) )
   quickBatch $ applicative (undefined :: Rose (Int, String, Char) )
   putStr "\n\n-- RoseL --\n"
---  quickBatch $ functor (undefined :: RoseL (Int, String, Char) )
---  quickBatch $ applicative (undefined :: RoseL (Int, String, Char) )
+  quickBatch $ functor (undefined :: RoseL (Int, String, Char) )
+  quickBatch $ applicative (undefined :: RoseL (Int, String, Char) )
