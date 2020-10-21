@@ -106,3 +106,14 @@ instance Monoid w => Applicative (Writer w) where
 
 
 
+-- Cont
+newtype Cont r a = Cont {runCont :: (a -> r) -> r}
+
+
+instance Functor (Cont r) where
+  fmap f (Cont fr) = Cont $ (br -> 
+
+
+instance Applicative (Cont r) where
+  pure = und
+  
