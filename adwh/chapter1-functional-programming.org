@@ -1,0 +1,104 @@
+* Chapter 1 - Functional programming
+
+** Notes:
+- Haskell is a _lazy_ language: evaluations are performed only when needed
+- Online vs offline algorithm:
+  - online: one that processes a list wihtout having the entire list available from the start
+  - offline: one that is giver the complete list to start with
+- Inductive definitions are particular recursive function defined with 2 clauses:
+  - empty list
+  - x:xs clause, in terms of the value of the fuction(recursion) for xs
+- Different solutions for problems arises simply because there are different but equally clear definitions of one or more of the basic functions describing the solution
+- Reasoning:
+  - point-wise: functions are fully applied to their arguments
+  - point-free: composition is used to combine functions and functions are not fully applied
+- Tupling: a computation could be made more efficient by tupling values of interest together and threading them through the computation
+- Premature optimisation is the root of all evil in programming.
+- Two central principles of good algorithm design:
+  1. formulate the problem in terms of basic well-understood ingredients
+  2. fuse the components into a dish that is finally ready to leave the kitchen
+
+h (foldr f e xs) = foldr g (h e) xs (fusion lay of foldr)
+with
+h (f x y) = g x (h y)  (fusion condition)
+
+Base case:
+  h (foldr f e []) =
+  h e              =   { definition of foldr}
+  foldr g (h e) [] =   { definition of foldr}
+
+
+Inductive step:
+  h (foldr f e (x:xs))   =  
+  h (f x (foldr f e xs)) =  {foldr step}
+  g x (h (foldr f e xs)) =  {fusion condition}
+  g x (foldr g (h e) xs) =  {induction}
+  foldr g (h e) (x:xs)      {foldr step}
+
+
+** Exercises
+*** 1.1
+#+BEGIN_SRC haskell
+maximum :: Ord a => [a] -> a
+take :: Int -> [a] -> [a]
+takeWhile :: (a -> Bool) -> [a] -> [a]
+inits :: [a] -> [[a]]
+splitAt :: Int -> [a] -> ([a], [a])
+null :: [a] -> Bool
+elem :: a -> [a] -> Bool
+zipWith :: (a -> b -> c) -> [a] -> [b] -> [c]
+minimum :: Ord a => [a] -> a
+drop :: Int -> [a] -> [a]
+dropWhile :: (a -> Bool) -> [a] -> [a]
+tails :: [a] -> [[a]]
+span ::(a -> Bool) -> [a] -> ([a],[a])
+all :: (a -> Bool) -> [a] -> Bool
+(!!) :: Int -> [a] -> a
+#+END_SRC
+
+*** 1.2
+#+BEGIN_SRC haskell
+uncons :: [a] -> Maybe (a, [a])
+uncons []     = Nothing
+uncons (x:xs) = Just (x, xs)
+#+END_SRC
+
+*** 1.3
+#+BEGIN_SRC haskell
+wrap :: a -> [a]
+wrap = pure
+
+-- partial
+unwrap :: [a] -> a
+unwrap = head
+
+single :: [a] -> Bool
+single (x:[]) = True
+single _ = False
+#+END_SRC
+
+*** 1.4
+#+BEGIN_SRC haskell
+reverse :: [a] -> [a]
+reverse = foldl (flip (:)) []
+
+#+END_SRC
+
+*** 1.5
+#+BEGIN_SRC haskell
+map :: (a -> b) -> [a] -> [b]
+map f = foldr ((:) . f) []
+
+filter :: (a -> Bool) -> [a] -> [a]
+filter f = foldr g [] where g x xs = if f x then x:xs else xs
+#+END_SRC
+
+*** 1.6
+filter p = foldr g [] where g x xs = if p x then x:xs else xs
+
+#+BEGIN_SRC haskell
+h = foldr f e . filter p
+i = undefined
+
+-- h = i
+#+END_SRC
