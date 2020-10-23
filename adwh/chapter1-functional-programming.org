@@ -96,9 +96,72 @@ filter f = foldr g [] where g x xs = if f x then x:xs else xs
 *** 1.6
 filter p = foldr g [] where g x xs = if p x then x:xs else xs
 
+
 #+BEGIN_SRC haskell
 h = foldr f e . filter p
-i = undefined
-
+i = foldr g [e] where g x axs = if p x then (f x):axs else axs
 -- h = i
+#+END_SRC
+
+
+*** 1.7
+#+BEGIN_SRC haskell
+takeWhile :: (a -> Bool) -> [a] -> [a]
+takeWhile f = foldr g [] where g x xs = if f x then x:xs else []
+#+END_SRC
+
+
+*** 1.8
+#+BEGIN_SRC haskell
+dropWhileEnd :: (a -> Bool) -> [a] -> [a]
+dropWhileEnd f = foldr g [] 
+  where 
+    g x [] = if f x then [] else x:[]
+    g x xs = x:xs
+#+END_SRC
+
+
+*** 1.9
+#+BEGIN_SRC haskell
+foldr f e xs = if null xs then e else f (head xs) (foldr f e (tail xs))
+foldl f e xs = if null xs then e else f (foldl f e (init xs)) (last xs)
+#+END_SRC
+foldl must evaluate the whole list
+
+
+*** 1.10
+The operation must be:
+  - associative: to change parethesis
+  - commutative: to move the "empty" element 
+  - internal: to work properly with definitions (a -> b -> b) and (b -> a -> b)
+
+This is true for all finite lists.
+
+*** 1.11
+#+BEGIN_SRC haskell
+integer :: [Int] -> Int
+-- cheaty ?
+integer = read . concatMap show 
+-- I assume I have at least 1 element
+integer = let g xs x = xs * 10 + x in foldl1 g
+#+END_SRC
+
+
+*** 1.12
+#+BEGIN_SRC haskell
+map (foldl f e) . inits = scanl f e
+map (foldr f e) . tails = scanr f e
+#+END_SRC
+
+
+*** 1.13
+#+BEGIN_SRC haskell
+apply :: Nat -> (a -> a) -> a -> a
+apply 0 _ x = x
+apply n f x = apply (n-1) f (f x)
+#+END_SRC
+
+*** 1.14
+#+BEGIN_SRC haskell
+
 #+END_SRC
