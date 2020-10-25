@@ -18,7 +18,7 @@
   1. formulate the problem in terms of basic well-understood ingredients
   2. fuse the components into a dish that is finally ready to leave the kitchen
 
-h (foldr f e xs) = foldr g (h e) xs (fusion lay of foldr)
+h (foldr f e xs) = foldr g (h e) xs (fusion rule of foldr)
 with
 h (f x y) = g x (h y)  (fusion condition)
 
@@ -45,7 +45,7 @@ takeWhile :: (a -> Bool) -> [a] -> [a]
 inits :: [a] -> [[a]]
 splitAt :: Int -> [a] -> ([a], [a])
 null :: [a] -> Bool
-elem :: a -> [a] -> Bool
+elem :: Eq a => a -> [a] -> Bool
 zipWith :: (a -> b -> c) -> [a] -> [b] -> [c]
 minimum :: Ord a => [a] -> a
 drop :: Int -> [a] -> [a]
@@ -66,14 +66,14 @@ uncons (x:xs) = Just (x, xs)
 *** 1.3
 #+BEGIN_SRC haskell
 wrap :: a -> [a]
-wrap = pure
+wrap x = [x] 
 
 -- partial
 unwrap :: [a] -> a
-unwrap = head
+unwrap [x] = x
 
 single :: [a] -> Bool
-single (x:[]) = True
+single [x] = True
 single _ = False
 #+END_SRC
 
@@ -96,20 +96,17 @@ filter f = foldr g [] where g x xs = if f x then x:xs else xs
 *** 1.6
 filter p = foldr g [] where g x xs = if p x then x:xs else xs
 
-
 #+BEGIN_SRC haskell
 h = foldr f e . filter p
-i = foldr g [e] where g x axs = if p x then (f x):axs else axs
+i = foldr g e where g x axs = if p x then f x y else axsy
 -- h = i
 #+END_SRC
-
 
 *** 1.7
 #+BEGIN_SRC haskell
 takeWhile :: (a -> Bool) -> [a] -> [a]
 takeWhile f = foldr g [] where g x xs = if f x then x:xs else []
 #+END_SRC
-
 
 *** 1.8
 #+BEGIN_SRC haskell
@@ -120,7 +117,6 @@ dropWhileEnd f = foldr g []
     g x xs = x:xs
 #+END_SRC
 
-
 *** 1.9
 #+BEGIN_SRC haskell
 foldr f e xs = if null xs then e else f (head xs) (foldr f e (tail xs))
@@ -128,12 +124,8 @@ foldl f e xs = if null xs then e else f (foldl f e (init xs)) (last xs)
 #+END_SRC
 foldl must evaluate the whole list
 
-
 *** 1.10
-The operation must be:
-  - associative: to change parethesis
-  - commutative: to move the "empty" element 
-  - internal: to work properly with definitions (a -> b -> b) and (b -> a -> b)
+The operation must be associative with an identity element
 
 This is true for all finite lists.
 
@@ -146,22 +138,89 @@ integer = read . concatMap show
 integer = let g xs x = xs * 10 + x in foldl1 g
 #+END_SRC
 
-
 *** 1.12
 #+BEGIN_SRC haskell
 map (foldl f e) . inits = scanl f e
 map (foldr f e) . tails = scanr f e
 #+END_SRC
 
-
 *** 1.13
 #+BEGIN_SRC haskell
 apply :: Nat -> (a -> a) -> a -> a
 apply 0 _ x = x
 apply n f x = apply (n-1) f (f x)
+
+-- of point free
+apply :: Nat -> (a -> a) -> a -> a
+apply 0 _ = id
+apply n f = apply (n-1) f . f
 #+END_SRC
 
-*** 1.14
-#+BEGIN_SRC haskell
+*** TODO 1.14
+Most of the inductive definitions can be written as instance of fold.
 
+#+BEGIN_SRC haskell
+-- inductive definition
+perms :: [a] -> [[a]]
+perms [] =  [[]]
+perms (x:xs) = [zs | ys <- perms xs, zs <- inserts x ys]
+
+inserts :: a -> [a] -> [[a]]
+inserts x [] = [[x]]
+inserts x (y:ys) = (x:y:ys): map (y:) (inserts x ys)
+
+inserts' :: a -> [a] -> [[a]]
+inserts' x = foldr g [[x]] 
+  where 
+    g y yss = (x:y:ys):map (y:) yss
+              where ys = tail (head yss)
+#+END_SRC
+
+*** 1.15
+I cannot generate the permutations of a list of function because this works with data with the instance of ~Eq~
+
+#+BEGIN_SRC haskell
+perms [] = [[]]
+perms xs = [x:ys | x <- xs, ys <- perms (remove x xs)]
+
+-- I can remove this since I am handling that case in the above function
+-- remove x [] = []
+remove x (y:ys) = if x == y then ys else y:remove x ys
+#+END_SRC
+
+*** TODO 1.16
+*** TODO 1.17
+*** TODO 1.18
+*** 1.19
+False. Haskell is lazy. ~labelsum~ doesn't compute anything before ~head~ is called. With the ~head~ call, only the first element of the list is computed
+*** 1.20
+#+BEGIN_SRC haskell
+h = concat xss
+g = foldl op id xss []
+  where 
+    op :: (a -> a) -> [b] -> (a -> a)
+    op acc xs  = acc . (xs++)
+#+END_SRC
+*** 1.21
+A list of number is said to be _steep_ if eatch number is greather than the sum of the elements following it.
+
+#+BEGIN_SRC haskell
+steep :: Ord a => [a] -> Bool
+
+-- 0 quadratic
+steep [] = True
+steep (x:xs) = x > sum xs  && steep xs
+
+-- 1 linear
+steep = snd . hsteep
+hsteep [] = (0, True)
+hsteep (x:xs) = (x + n, x > n && a) where (n, a) = steep xs
+
+-- 2 linear with monoids
+import Data.Monoid
+steep xs = getAll (f zs)
+  where
+    f = foldMap (All . uncurry (>)) 
+    zs = zip xs $ tail (scanr (+) 0 xs)
+-- foldr (&& . uncarry (>)) True
 #+END_SRC
