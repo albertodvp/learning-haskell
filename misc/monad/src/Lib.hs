@@ -1,28 +1,22 @@
+{-# LANGUAGE DeriveFunctor #-}
 module Lib where
-
--- ZipList
-newtype ZL a = ZL { getZL :: [a] } deriving (Eq, Show)
-
--- Compose
-newtype Cmp f g a = Cmp { getCmp :: f (g a) } deriving (Eq, Show)
-
--- Bin
-data Bin a = Leaf a | Bin (Bin a) (Bin a) deriving (Eq, Show)
-
--- Rose
-data Rose a = Rose [Rose a] | LeafRose a deriving (Eq, Show)
-
-
--- RoseL
-data RoseL a = RoseL a [RoseL a] deriving (Eq, Show)
 
 -- Reader
 
 newtype Reader r a  = Reader {runReader :: r -> a} deriving (Functor)
 
+instance Applicative (Reader r) where
+  pure = Reader . const
+  (Reader rf) <*> (Reader ra) = Reader  (\r -> rf r (ra r))
+
+instance Monad (Reader r) where
+  Reader ra >>= fr = undefined
+
+    
+
 -- State
 
-newtype State s a = State {runState :: s -> (a, s)} deriving (Functor)
+newtype State s a = State {runState :: s -> (a, s)}  deriving (Functor)
 
 -- Writer
 
