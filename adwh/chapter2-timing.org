@@ -1,0 +1,18 @@
+* Chapter 2 - Timing
+
+** Notes
+- Big theta: /f/ is of order /g/, /f/ = \Theta(/g/) if there are positive constants /C/ and /D/ and a number /n_0/ such that:
+  #+BEGIN_CENTER
+  g(n) \le f(n) \le Dg(n)
+  #+END_CENTER
+- Big omicron:
+- Big omega:
+   
+** Exercises
+*** 1.1
+#+BEGIN_SRC haskell
+#+END_SRC
+
+*** 1.2
+
+*** 1.3
