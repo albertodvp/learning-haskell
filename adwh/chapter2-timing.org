@@ -1,18 +1,38 @@
 * Chapter 2 - Timing
 
 ** Notes
-- Big theta: /f/ is of order /g/, /f/ = \Theta(/g/) if there are positive constants /C/ and /D/ and a number /n_0/ such that:
+- Big theta: /f/ is of order /g/, /f/ = \Theta(/g/) if there are positive constants /C/ and /D/ and a natural number /n_0/ such that:
   #+BEGIN_CENTER
-  g(n) \le f(n) \le Dg(n)
+  /Cg/ (n) \le /f/ (n) \le /Dg/ (n)
   #+END_CENTER
-- Big omicron:
-- Big omega:
-   
+  for all /n/ \ge /n_0/
+- Big omicron (upper bound): /f/ is of order at most /g/, /f/ = O(/g/) if there is a positive constant /C/ and a natural /n_0/ such that:
+  #+BEGIN_CENTER
+  /f/ (n) \le /Cg/ (n)
+  #+END_CENTER
+  for all /n/ \ge /n_0/
+
+- Big omega (lower bound): /f/ is of order at least /g/, /f/ = \Omega(/g/) if there is a passivity constant /C/ and a natural /n_0/ such that:
+  #+BEGIN_CENTER
+  /f/ (n) \ge /Cg/ (n)
+  #+END_CENTER
+  for all /n/ \ge /n_0/
+
+- /f/ = \Theta(/g/) if and only if /f/ = O(/g/) and /f/ = \Omega(/g/)
+
+- The equal sign in /f/ = \Theta(/g/) is not true equality (\in)
+
+- We usually use \Theta notation for *particular cases* (e.g. worst case)
+
+- A basic step is not clear. The simplest alternative in FP is to count *reduction steps*.
+
+- The analysis is easier assuming *eager evaluation*.
+
+- *Recurrence relation*: associated with every recursively defined function there is another recursively defined function for estimating the first function's running time.
+
+- The *amortized* cost of a single operation is obtained by dividing the /total cost/ of the operations by the /number/ of such operations
 ** Exercises
 *** 1.1
 #+BEGIN_SRC haskell
 #+END_SRC
 
-*** 1.2
-
-*** 1.3
