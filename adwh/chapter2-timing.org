@@ -3,18 +3,18 @@
 ** Notes
 - Big theta: /f/ is of order /g/, /f/ = \Theta(/g/) if there are positive constants /C/ and /D/ and a natural number /n_0/ such that:
   #+BEGIN_CENTER
-  /Cg/ (n) \le /f/ (n) \le /Dg/ (n)
+  /Cg(n)/ \le /f(n)/ \le /Dg(n)/
   #+END_CENTER
   for all /n/ \ge /n_0/
 - Big omicron (upper bound): /f/ is of order at most /g/, /f/ = O(/g/) if there is a positive constant /C/ and a natural /n_0/ such that:
   #+BEGIN_CENTER
-  /f/ (n) \le /Cg/ (n)
+  /f(n)/ \le /Cg(n)/
   #+END_CENTER
   for all /n/ \ge /n_0/
 
 - Big omega (lower bound): /f/ is of order at least /g/, /f/ = \Omega(/g/) if there is a passivity constant /C/ and a natural /n_0/ such that:
   #+BEGIN_CENTER
-  /f/ (n) \ge /Cg/ (n)
+  /f(n)/ \ge /Cg(n)/
   #+END_CENTER
   for all /n/ \ge /n_0/
 
@@ -31,8 +31,21 @@
 - *Recurrence relation*: associated with every recursively defined function there is another recursively defined function for estimating the first function's running time.
 
 - The *amortized* cost of a single operation is obtained by dividing the /total cost/ of the operations by the /number/ of such operations
+  
 ** Exercises
-*** 1.1
-#+BEGIN_SRC haskell
-#+END_SRC
+*** 2.1
+- /f(x)/  = \Theta(1) means: \exists /c/, /d/ (positive constants) and \exists /n_0/ (natural) such that:
+  #+BEGIN_CENTER
+  /cg(n)/ \le /f(n)/ \le /dg(n)/
+  #+END_CENTER
+  for all /n/ \ge /n_0/
 
+- /f(x)/  = O(1) means: \exists /d/ (positive constant) and \exists /n_0/ (natural) such that:
+  #+BEGIN_CENTER
+  /f(n)/ \le /cg(n)/ 
+  #+END_CENTER
+  for all /n/ \ge /n_0/
+
+- /f(x)/  = O(1) and /f(x)/ = \Theta(1) are not equivalents. C in the first case must be positive. E.g. /f = const 0/, f is O(1) but not \Theta(1)
+
+ 
