@@ -1,0 +1,4 @@
+* Books related
+Books:
+- [X] [[./hpffp][Algorithm Design with Haskell - Jeremy Gibbons and Richard S. Haskell Programming from First Principles - Christopher Allen and Julie Moronuki]]
+- [X] [[./adwh][Algorithm Design with Haskell - Jeremy Gibbons and Richard S. Bird]]
