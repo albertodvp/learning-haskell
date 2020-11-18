@@ -1,0 +1,2 @@
+* Haskell
+My collection of Haskell exercises, notes and miscellaneous produced in the process of learning Haskell.
