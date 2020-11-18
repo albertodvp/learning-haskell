@@ -48,4 +48,11 @@
 
 - /f(x)/  = O(1) and /f(x)/ = \Theta(1) are not equivalents. C in the first case must be positive. E.g. /f = const 0/, f is O(1) but not \Theta(1)
 
+*** 2.2
+- O(/f(n)/ \times /g(n)/) = /f(n)/ \times O(/g(n)/) ?
+  \newline Given /h(n)/ = O(/f(n)/ \times /g(n)/) \Rightarrow \exists /c,d/ (positive constants) and  \exists /n_0/ (natural) such that
+  #+BEGIN_CENTER
+  /cf(n)/ \times /cg(n)/ \le /h(n)/ \le /df(n)/ \times /dg(n)/, \forall /n/ \ge /n_0/
+  #+END_CENTER
+- O(/f(n)/ + /g(n)/) = /f(n)/ + O(/g(n)/)
  
