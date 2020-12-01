@@ -1,12 +1,13 @@
 module FinalExs where
 
-import Control.Monad (join)
+import           Control.Monad (join)
+
 
 
 data Nope a = NopeDotJpg deriving (Eq, Show)
 
 instance Functor Nope where
-  fmap _ NopeDotJpg = NopeDotJpg
+  fmap _  NopeDotJpg =NopeDotJpg
 
 
 instance Applicative Nope where
@@ -17,14 +18,14 @@ instance Applicative Nope where
 instance Monad Nope where
   return = pure
   _ >>= _ = NopeDotJpg
-  
+
 
 
 --
 
 data BahEither b a = PLeft a | PRight b deriving (Eq, Show)
 
-instance Functor (BahEither b) where
+instance Functor (BahEither b) where-;
   fmap _ (PRight b) = PRight b
   fmap f (PLeft a)  = PLeft $ f a
 
@@ -60,20 +61,20 @@ instance Monad Identity where
 data List a = Nil | Cons a (List a) deriving (Eq, Show)
 
 instance Functor List where
-  fmap _ Nil             = Nil
-  fmap f (Cons a xs)     = Cons (f a) (fmap f xs)
+  fmap _ Nil         = Nil
+  fmap f (Cons a xs) = Cons (f a) (fmap f xs)
 
 append :: List a -> List a -> List a
-append Nil         ys   = ys
-append (Cons x xs) ys   = Cons x $ xs `append` ys
+append Nil         ys = ys
+append (Cons x xs) ys = Cons x $ xs `append` ys
 
 -- concat' :: List (List a) -> List a
 -- concat' Nil             = Nil
 -- concat' (Cons x xs)     = append x (concat' xs)
 
 fold :: (b -> a -> b) -> b -> List a -> b
-fold _ b Nil            = b
-fold f b (Cons x xs)    = fold f (f b x) xs
+fold _ b Nil         = b
+fold f b (Cons x xs) = fold f (f b x) xs
 
 concat' :: List (List a) -> List a
 concat' = fold append Nil
@@ -87,14 +88,14 @@ instance Applicative List where
   Nil       <*> _   = Nil
   _         <*> Nil = Nil
   --  Cons f fs <*> xs  = (f <$> xs) `append` (fs <*> xs)
-  fs <*> xs = flatMap (<$> xs) fs
+  fs <*> xs         = flatMap (<$> xs) fs
 
 instance Monad List where
   return = pure
   Nil >>= _ = Nil
   -- (>>=) :: List a -> (a -> List b) -> List b
-  xs >>= f = concat' $ f <$> xs
-  
+  xs >>= f  = concat' $ f <$> xs
+
 --
 
 -- 1

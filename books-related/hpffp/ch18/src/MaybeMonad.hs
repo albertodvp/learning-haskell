@@ -8,7 +8,7 @@ data Cow = Cow {
 
 
 noEmpty :: String -> Maybe String
-noEmpty "" = Nothing
+noEmpty ""  = Nothing
 noEmpty str = Just str
 
 
@@ -37,10 +37,10 @@ mkSphericalCow name' age' weight' =
           Nothing      -> Nothing
           Just weighty ->
             weightCheck (Cow nammy agey weighty)
-            
+
 
 mkSphericalCow' :: String -> Int -> Int -> Maybe Cow
-mkSphericalCow' name' age' weight' = noEmpty name' >> noNegative age' >> noNegative weight' >> weightCheck (Cow name' age' weight') 
+mkSphericalCow' name' age' weight' = noEmpty name' >> noNegative age' >> noNegative weight' >> weightCheck (Cow name' age' weight')
 
 mkSphericalCow'' :: String -> Int -> Int -> Maybe Cow
 mkSphericalCow'' name' age' weight' = do
@@ -48,4 +48,4 @@ mkSphericalCow'' name' age' weight' = do
   a <- noNegative age'
   w <- noNegative weight'
   weightCheck $ Cow n a w
-  
+

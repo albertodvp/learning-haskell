@@ -1,12 +1,12 @@
-import EitherMonad
-import BadMonad
-import FinalExs
+import           BadMonad
+import           EitherMonad
+import           FinalExs
 
-import Test.QuickCheck
-import Test.QuickCheck.Checkers
-import Test.QuickCheck.Classes
+import           Test.QuickCheck
+import           Test.QuickCheck.Checkers
+import           Test.QuickCheck.Classes
 
-import Control.Applicative (liftA2)
+import           Control.Applicative      (liftA2)
 
 instance (Eq a, Eq b) => EqProp (Sum a b) where
   (=-=) = eq
@@ -55,8 +55,8 @@ instance Eq a => EqProp (Identity a) where
   (=-=) = eq
 
 take' :: Int -> List a -> List a
-take' 0 xs = Nil
-take' _ Nil = Nil
+take' 0 xs          = Nil
+take' _ Nil         = Nil
 take' i (Cons a xs) = Cons a $ take' (i-1) xs
 
 instance Eq a => EqProp (List a) where
@@ -77,7 +77,7 @@ main = do
       i = undefined
       l :: List (Int, String, Int)
       l = undefined
-        
+
   quickBatch $ monad (undefined :: Sum String (String, Int, Char))
   putStrLn ""
   putStrLn "CountMe"

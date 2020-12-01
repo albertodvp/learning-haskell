@@ -18,3 +18,4 @@ instance Monad CountMe where
   CountMe n a >>= f =
     let CountMe n' b = f a
     in CountMe (n+n') b
+
