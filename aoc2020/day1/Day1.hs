@@ -8,7 +8,9 @@ import qualified Data.IntSet         as IntSet
 import qualified Data.Map            as Map
 import           Data.Maybe          (catMaybes, isJust)
 import           Data.Monoid
-type Resolver = [Int] -> IO Int
+
+type Input = [Int]
+type Resolver = Input -> IO Int
 type Target = Int
 type HashTable = H.CuckooHashTable Int (Int, Int)
 
@@ -68,23 +70,28 @@ findRes2Fast t xs = fmap (head . catMaybes) $ sequence $ do
     partialDiffs = (t -) <$> xs -- O(n)
     subSave x y = (x - y, (x,y))
 
-
-resolvers :: Target -> Map.Map String Resolver
+-- TODO generalize a bit
+resolvers :: Target -> Map.Map (String, String) Resolver
 resolvers t = Map.fromList
-  [ ("day1.1 fast", findRes1Fast t)
-  , ("day1.2 fast (actually slower)", findRes2Fast t)
-  , ("day1.1", findRes1 t)
-  , ("day1.2", findRes2 t)
+  [ (("day1.1","fast"), findRes1Fast t)
+  , (("day1.2", "fast"), findRes2Fast t)
+  , (("day1.1","base"), findRes1 t)
+  , (("day1.2","base"), findRes2 t)
   ]
 
 inputFile :: FilePath
 inputFile = "./input"
 
-inputs :: IO [Int]
+inputs :: IO Input
 inputs = fmap read <$> (lines <$> readFile inputFile)
 
-results :: IO (Map.Map String Int)
+results :: IO (Map.Map (String, String) Int)
 results = inputs >>= sequence . (<$> resolvers 2020) . flip ($)
 
 main :: IO ()
-main = defaultMain $ uncurry bench <$> Map.toList (whnfIO . (inputs >>=) <$> resolvers 2020)
+main = defaultMain $ uncurry bgroup <$> group (uncurry benches <$> Map.toList (whnfIO . (inputs >>=) <$> resolvers 2020))
+  where
+    benches (groupName, name) ble = (groupName, bench name ble)
+    groupUpdate (groupName, bench) m = Map.insertWith (++) groupName [bench] m
+    group = Map.toList . foldr groupUpdate Map.empty
+

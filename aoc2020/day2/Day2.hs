@@ -1,13 +1,16 @@
+import           Data.Functor    ((<&>))
 import           Data.List.Split
 
--- Example:
--- 17-19 p: pwpzpfbrcpppjppbmppp
 data Row = Row {
   x        :: Int,
   y        :: Int,
   char     :: Char,
   password :: String
   } deriving Show
+
+type Input = [Row]
+type Resolver = Input -> Int
+
 
 mkRow :: String -> Row
 mkRow s = Row x' y' c p
@@ -27,14 +30,22 @@ valid1 (Row lb ub c pass) = (lb <= cs) && (cs <= ub)
   where
     cs = countOcc c pass
 
--- a xor b = a and not b or b =nd not a
 -- Correct answer: 727
 valid2 :: Row -> Bool
 valid2 (Row p1 p2 c pass) = countOcc c [pass !! (p1-1), pass !! (p2-1)] == 1
 
 
-day2 :: String -> String
-day2 = show . length . filter valid2 . fmap mkRow . lines
+resolvers :: [Resolver]
+resolvers = (length .) . filter <$> [valid1, valid2]
+
+
+inputFile :: FilePath
+inputFile = "./input"
+
+
+inputs :: IO Input
+inputs = fmap mkRow . lines <$> readFile inputFile
+
 
 main :: IO()
-main = interact day2
+main = inputs >>= print . (resolvers <&>) . flip ($)
