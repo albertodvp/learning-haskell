@@ -1,6 +1,7 @@
 import           Data.Functor    ((<&>))
 import           Data.List.Split
 
+
 data Row = Row {
   x        :: Int,
   y        :: Int,
