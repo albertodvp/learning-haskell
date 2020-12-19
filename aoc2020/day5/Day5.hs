@@ -1,17 +1,18 @@
 import           Control.Applicative
-import           Data.List           (sort)
+import           Control.Monad       (guard)
+import           Data.List           (nub, sort)
 import qualified Data.Map            as M
 import           Data.Maybe          (fromJust)
 
 type Op = Double -> Double -> Double
 
 data Position = Position
-  { getRow :: Integer
-  , getCol :: Integer
+  { getRow :: Int
+  , getCol :: Int
   }
 
-getId :: Position -> Integer
-getId p = r * 8 + c
+getID :: Position -> Int
+getID p = r * 8 + c
   where
     r = getRow p
     c = getCol p
@@ -31,7 +32,7 @@ pickOp = (M.!) ops
 pows :: Int -> [Double]
 pows bits = reverse $ take bits $ 0.5: ((2^) <$> [0..])
 
-parse :: Int -> String -> Integer
+parse :: Int -> String -> Int
 parse bits s = round $ foldl f start (os <*> ps)
   where
     f = flip ($)
@@ -55,16 +56,19 @@ parseLine s = Position row col
     col = parse (maxBits - rowBits) colS
     colS = drop rowBits s
 
-p1 :: [Position] -> Integer
-p1 = maximum . fmap getId
+p1 :: [Position] -> Int
+p1 = maximum . fmap getID
 
-p2 :: [Position] -> Integer
-p2 xs = fst $ head $ dropWhile (uncurry (/=)) pairs
+validIDs :: [Int]
+validIDs = nub $ getID <$> liftA2 Position [0..2^rowBits] [0..2^(maxBits - rowBits)]
+
+p2 :: [Position] -> Int
+p2 xs = fst $ head $ dropWhile (uncurry (==)) pairs
   where
-    presentIDs = sort $ fmap getId xs
+    presentIDs = sort $ fmap getID xs
     firstID = head presentIDs
-    validIDs = [firstID,firstID+8..]
-    pairs = zip validIDs presentIDs
+    pairs = zip (filter (>= firstID) validIDs) presentIDs
+
 
 
 main :: IO ()
