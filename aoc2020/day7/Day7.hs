@@ -1,8 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
-import           Data.List  (nub)
-import qualified Data.Map   as M
-import           Data.Maybe (fromMaybe)
-import qualified Data.Text  as T
+import           Data.List (nub)
+import qualified Data.Map  as M
+import qualified Data.Text as T
 newtype Color = Color T.Text deriving (Eq, Show, Ord)
 
 type RuleMap = M.Map Color [Color]
@@ -19,8 +18,7 @@ parseLine s = (container, contents)
       "no other bags" -> []
       _ -> map (Color . T.drop 2 . removeLastWord) (T.splitOn ", " (T.init b))
 
--- containerToContents :: [T.Text] -> RuleMap
--- containerToContents = M.fromList . map parseLine
+h = 1:foldr (:) [] h
 
 contentToContainers :: [T.Text] -> RuleMap
 contentToContainers = foldr f M.empty
@@ -37,7 +35,7 @@ canBeContained c m = help
     f :: Color -> [Color] -> [Color]
     f c cs = case M.lookup c m of
       Just cs' -> cs' ++ cs
-      Nothing  -> []
+      Nothing  -> cs
 
 testMap :: RuleMap
 testMap = M.fromList
@@ -45,6 +43,11 @@ testMap = M.fromList
   , (Color "bright blue",[Color "shiny green",Color "dark yellow",Color "muted silver",Color "bright bronze",Color "pale aqua",Color "dotted black",Color "drab beige"])
   , (Color "bright bronze",[Color "bright blue",Color "posh lavender",Color "vibrant brown"])
   , (Color "shiny green", [Color "end"])
+  ]
+
+testMap'= M.fromList
+  [ (Color "a", [Color "b", Color "c"])
+  , (Color "b", [Color "d"])
   ]
 
 c2 = Color "bright aqua"
@@ -58,7 +61,7 @@ c3 = Color "clear brown"
 main :: IO ()
 main = do
   input <- readFile "./input"
-  let lines = T.lines $ T.pack input
-  let ctcs = contentToContainers lines
+  let xs = T.lines $ T.pack input
+  let ctcs = contentToContainers xs
   print $ length $ nub $ tail $ canBeContained c1 ctcs
 
