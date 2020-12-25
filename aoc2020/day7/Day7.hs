@@ -1,67 +1,71 @@
 {-# LANGUAGE OverloadedStrings #-}
-import           Data.List (nub)
-import qualified Data.Map  as M
-import qualified Data.Text as T
-newtype Color = Color T.Text deriving (Eq, Show, Ord)
+import qualified Data.Map   as M
+import           Data.Maybe (fromMaybe)
+import qualified Data.Set   as S
+import qualified Data.Text  as T
 
-type RuleMap = M.Map Color [Color]
+newtype Color = Color T.Text deriving (Eq, Show, Ord)
+data Bag = Bag
+  { getN     ::Int
+  , getColor :: Color
+  } deriving (Eq, Show, Ord)
+
+
+type RuleMap = M.Map Color [Bag]
 
 removeLastWord :: T.Text -> T.Text
 removeLastWord = T.unwords . init . T.words
 
-parseLine :: T.Text -> (Color, [Color])
+parseLine :: T.Text -> (Color, [Bag])
 parseLine s = (container, contents)
   where
     [a, b] = T.splitOn " contain " s
     container = Color $ removeLastWord a
+    mkBag ts = let s = T.words ts
+                   n = read $ T.unpack $ head s
+                   c = Color $ T.unwords $ init $ tail s
+               in Bag n c
+
+
     contents = case T.init b of
       "no other bags" -> []
-      _ -> map (Color . T.drop 2 . removeLastWord) (T.splitOn ", " (T.init b))
+      xs              -> mkBag <$> T.splitOn ", " xs
 
-h = 1:foldr (:) [] h
+parseLineColorsOnly :: T.Text -> (Color, [Color])
+parseLineColorsOnly t = fmap getColor <$> parseLine t
 
 contentToContainers :: [T.Text] -> RuleMap
 contentToContainers = foldr f M.empty
   where
-    f row m = let (container, contents) = parseLine row
+    f row m = let (container, contents) = parseLineColorsOnly row
               in foldr (g container) m contents
-    g container content = M.insertWith (++) content [container]
+    g container content = M.insertWith (++) content [Bag 1 container]
 
-canBeContained :: Color -> RuleMap -> [Color]
-canBeContained c m = help
+containerToContents :: [T.Text] -> RuleMap
+containerToContents = foldr f M.empty
   where
-    help :: [Color]
-    help = foldr f [] (c:help)
-    f :: Color -> [Color] -> [Color]
-    f c cs = case M.lookup c m of
-      Just cs' -> cs' ++ cs
-      Nothing  -> cs
+    f row = let (container, bags) = parseLine row
+              in M.insert container bags
 
-testMap :: RuleMap
-testMap = M.fromList
-  [ (Color "bright aqua",[Color "bright blue", Color "mirrored aqua"])
-  , (Color "bright blue",[Color "shiny green",Color "dark yellow",Color "muted silver",Color "bright bronze",Color "pale aqua",Color "dotted black",Color "drab beige"])
-  , (Color "bright bronze",[Color "bright blue",Color "posh lavender",Color "vibrant brown"])
-  , (Color "shiny green", [Color "end"])
-  ]
 
-testMap'= M.fromList
-  [ (Color "a", [Color "b", Color "c"])
-  , (Color "b", [Color "d"])
-  ]
+bfs :: Color -> RuleMap -> [Bag]
+bfs c m = S.toList $ fst $ help (S.empty, S.singleton (Bag 1 c))
+  where
+    help :: (S.Set Bag, S.Set Bag) -> (S.Set Bag, S.Set Bag)
+    help (visited, toVisit)
+      | S.null toVisit = (visited, S.empty)
+      | otherwise = help (visited', toVisit')
+      where
+        c = S.findMin toVisit
+        validBags = S.fromList $ fromMaybe [] (m M.!? getColor c)
+        toVisit' = S.deleteMin toVisit `S.union` validBags
+        visited' = S.union  visited validBags
 
-c2 = Color "bright aqua"
-test = canBeContained c2 testMap
+c = Color "shiny gold"
 
-c1 :: Color
-c1 = Color "shiny gold"
-
-c3 = Color "clear brown"
+p1 :: [T.Text] -> Int
+p1 = length . bfs c . contentToContainers
 
 main :: IO ()
-main = do
-  input <- readFile "./input"
-  let xs = T.lines $ T.pack input
-  let ctcs = contentToContainers xs
-  print $ length $ nub $ tail $ canBeContained c1 ctcs
+main = readFile "./input" >>= print . p1 . T.lines . T.pack
 
