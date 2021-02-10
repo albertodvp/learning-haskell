@@ -3,10 +3,37 @@ module Lib where
 -- class (Functor t, Foldable t) => Traversable t where
 -- traverse :: (Traversable t, Applicative f) => (a -> f b) -> t a -> f (t b)
 -- sequenceA :: (Traversable t, Applicative f) => t (f a) -> f (t a)
+-- sequenceA = traverse id
+-- traverse f = sequenceA . fmap f
 
+-- Identity
+newtype Identity a = Identity a deriving (Eq, Show, Ord)
 
+instance Functor Identity where
+  fmap f (Identity a) = Identity $ f a
+
+instance Foldable Identity where
+  foldr f b (Identity a) = f a b
+  foldMap f (Identity a) = f a
+
+instance Traversable Identity where
+  traverse gafb (Identity a) = Identity <$> gafb a
+  sequenceA (Identity fa) = Identity <$> fa
+
+-- Constant
 newtype Constant a b =
-  Constant { getConstant :: a }
+  Constant { getConstant :: a } deriving (Eq, Show)
+
+instance Functor (Constant a) where
+  fmap f (Constant a) = Constant a
+
+instance Foldable (Constant a) where
+  foldr _ b (Constant a) = b
+  foldMap f (Constant a) = mempty
+
+instance Traversable (Constant a) where
+  traverse f (Constant a) = pure $ Constant a
+  sequenceA (Constant a) = pure $ Constant a
 
 -- Maybe
 data Optional a =
