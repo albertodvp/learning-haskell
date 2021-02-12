@@ -64,16 +64,49 @@ instance (Arbitrary a, Arbitrary b) => Arbitrary (Big a b) where
 instance (Eq a, Eq b) => EqProp (Big a b) where
   (=-=) = eq
 
+instance (Arbitrary a, Arbitrary b) => Arbitrary (Bigger a b) where
+  arbitrary = Bigger <$> arbitrary <*> arbitrary <*> arbitrary <*> arbitrary
+
+
+instance (Eq a, Eq b) => EqProp (Bigger a b) where
+  (=-=) = eq
+
 instance ( Functor n, Arbitrary (n a), Arbitrary a ) => Arbitrary (S n a) where
   arbitrary = S <$> arbitrary <*> arbitrary
 
+instance (Eq (n a), Eq a) => EqProp (S n a) where
+  (=-=) = eq
+
+instance Arbitrary a => Arbitrary (Tree a) where
+  arbitrary = frequency [
+    (4, pure Empty),
+    (4, Leaf <$> arbitrary),
+    (1, liftA3 Node arbitrary arbitrary arbitrary)
+    ]
+
+
+instance Eq a => EqProp (Tree a) where
+  (=-=) = eq
+
 main :: IO ()
 main = do
+  putStr "Identity"
   quickBatch (traversable (undefined :: Identity (Int, Int, [Int])))
+  putStr "Optional"
   quickBatch (traversable (undefined :: Optional (Int, Int, [Int])))
+  putStr "Constant"
   quickBatch (traversable (undefined :: Constant Int (Int, Int, [Int])))
+  putStr "List"
   quickBatch (traversable (undefined :: List (Int, Int, [Int])))
+  putStr "Three"
   quickBatch (traversable (undefined :: Three Int Int (Int, Int, [Int])))
+  putStr "Pair"
   quickBatch (traversable (undefined :: Pair Int (Int, Int, [Int])))
+  putStr "Big"
   quickBatch (traversable (undefined :: Big Int (Int, Int, [Int])))
-
+  putStr "Bigger"
+  quickBatch (traversable (undefined :: Bigger Int (Int, Int, [Int])))
+  putStr "S"
+  quickBatch (traversable (undefined :: S [] (Int, Int, [Int])))
+  putStr "Tree"
+  quickBatch (traversable (undefined :: Tree (Int, Int, [Int])))

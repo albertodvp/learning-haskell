@@ -1,7 +1,7 @@
 module Lib where
 
 
-import           Control.Applicative (liftA2)
+import           Control.Applicative (liftA2, liftA3)
 -- class (Functor t, Foldable t) => Traversable t where
 -- traverse :: (Traversable t, Applicative f) => (a -> f b) -> t a -> f (t b)
 -- sequenceA :: (Traversable t, Applicative f) => t (f a) -> f (t a)
@@ -117,33 +117,40 @@ instance Functor (Big a) where
   fmap f (Big a b b') = Big a (f b) (f b')
 
 instance Foldable (Big a) where
+  foldr f c (Big a b b') = f b (f b' c)
   foldMap f (Big a b b') = f b <> f b'
 
 instance Traversable (Big a) where
   traverse f (Big a b b') = liftA2 (Big a) (f b) (f b')
-
+  sequenceA (Big a b b') = liftA2 (Big a) b b'
 
 -- TODO
 -- Bigger
 data Bigger a b =
-  Bigger a b b b
+  Bigger a b b b deriving (Eq, Show)
 
+instance Functor (Bigger a) where
+  fmap f (Bigger a b b' b'') = Bigger a (f b) (f b') (f b'')
 
+instance Foldable (Bigger a) where
+  foldMap f (Bigger a b b' b'') = mconcat $ f <$> [b, b', b'']
+
+instance Traversable (Bigger a) where
+  sequenceA (Bigger a b b' b'') = liftA3 (Bigger a) b b' b''
 
 -- S
 data S n a = S (n a) a deriving (Eq, Show)
 
--- TODO check
 instance Functor n => Functor (S n) where
   fmap f (S na a) = S (fmap f na) (f a)
 
--- TODO check
 instance Foldable n => Foldable (S n) where
-  foldr f b (S na a) = f a (foldr f b na)
+  -- foldr f b (S na a) = f a (foldr f b na) -- TODO: this only (without foldMap, is not working. Didn't understand why...
+  foldMap f (S na a) = foldMap f na <> f a
   -- TODO foldmap
 
 instance Traversable n => Traversable (S n) where
-  traverse f (S na a) = 
+  traverse f (S na a) = liftA2 S (traverse f na) (f a)
 
 data Tree a =
     Empty
@@ -152,13 +159,24 @@ data Tree a =
   deriving (Eq, Show)
 
 instance Functor Tree where
-  fmap = undefined
+  fmap _ Empty        = Empty
+  fmap f (Leaf a)     = Leaf $ f a
+  fmap f (Node x a y) = Node (f <$> x) (f a) (f <$> y)
 
 -- foldMap is a bit easier
 -- and looks more natural,
 -- but you can do foldr, too,
 -- for extra credit.
 instance Foldable Tree where
-  foldMap = undefined
+  -- TODO: this only (without foldMap, is not working. Didn't understand why...
+  foldMap _ Empty        = mempty
+  foldMap f (Leaf a)     = f a
+  foldMap f (Node x a y) = mconcat [foldMap f x, f a , foldMap f y]
+  -- foldr _ b Empty        = b
+  -- foldr f b (Leaf a)     = f a b
+  -- foldr f b (Node x a y) = f a $ foldr f (foldr f b y) x
+
 instance Traversable Tree where
-  traverse = undefined
+  traverse f Empty        = pure Empty
+  traverse f (Leaf a)     = Leaf <$> f a
+  traverse f (Node x a y) = liftA3 Node (traverse f x) (f a) (traverse f y)
