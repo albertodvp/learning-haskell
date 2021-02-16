@@ -28,4 +28,5 @@ tupled' = do
   return (x, y)
 
 tupled'' :: [Char] -> ([Char], [Char])
-tupled'' xs = _
+tupled'' = rev >>=  (. cap) <$> (,)
+
