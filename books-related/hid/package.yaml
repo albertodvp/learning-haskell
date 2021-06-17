@@ -35,8 +35,14 @@ executables:
     dependencies:
     - hid
   ch1:
-    main:                Ch01.hs
+    main:                Main.hs
     source-dirs:         ch01
+    dependencies:
+    - text
+    - fmt
+  ch2:
+    main:                Main.hs
+    source-dirs:         ch02
     dependencies:
     - text
     - fmt
