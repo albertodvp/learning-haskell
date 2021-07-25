@@ -1,6 +1,7 @@
 {-# LANGUAGE InstanceSigs #-}
-
 module ReaderMonad where
+
+import Data.Char
 
 
 newtype Reader r a =
@@ -21,3 +22,15 @@ instance Monad (Reader r) where
 
 
 
+strIsEnougthToLower :: Reader [Char] Bool
+strIsEnougthToLower = Reader $ \s -> length s > 5
+
+strLenFilterLower :: Bool -> Reader [Char] Int
+strLenFilterLower x = Reader $  length . filter (if x then isLower else isUpper)
+
+
+comp = do
+  isEnougth <- strIsEnougthToLower
+  strLenFilterLower isEnougth
+
+comp' = strIsEnougthToLower >>= strLenFilterLower

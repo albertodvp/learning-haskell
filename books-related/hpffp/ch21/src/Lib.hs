@@ -31,10 +31,10 @@ instance Functor (Constant a) where
 
 instance Foldable (Constant a) where
   foldr _ b (Constant a) = b
-  foldMap f (Constant a) = mempty
+  foldMap _ (Constant a) = mempty
 
 instance Traversable (Constant a) where
-  traverse f (Constant a) = pure $ Constant a
+  traverse _ (Constant a) = pure (Constant a)
   sequenceA (Constant a) = pure $ Constant a
 
 -- Maybe
