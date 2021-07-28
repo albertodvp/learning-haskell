@@ -1,7 +1,7 @@
 name:                ch23
 version:             0.1.0.0
--- synopsis:
--- description:
+synopsis: ch23
+description: ch23 -x
 homepage:            https://github.com/githubuser/ch23#readme
 license:             BSD3
 license-file:        LICENSE
@@ -11,6 +11,7 @@ copyright:           2021 Author name here
 category:            Web
 build-type:          Simple
 extra-source-files:  README.md
+                     
 cabal-version:       >=1.10
 
 library
@@ -20,7 +21,18 @@ library
                      , random
                      , transformers
   default-language:    Haskell2010
+  exposed-modules: Moi
 
+test-suite ch23-testsuite
+  type: exitcode-stdio-1.0
+  main-is: Main.hs
+  default-language:    Haskell2010
+  hs-source-dirs: test
+  build-depends:       base >= 4.7 && < 5
+                     , QuickCheck
+                     , ch23
+  
+        
 source-repository head
   type:     git
   location: https://github.com/githubuser/ch23
