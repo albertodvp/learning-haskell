@@ -9,10 +9,9 @@ instance Functor (Moi s) where
   fmap f (Moi sas) = Moi $ \s -> let (a, s') = sas s
                                  in (f a, s')
 
--- TODO check with tests if I cannot propagate the state
 instance Applicative (Moi s) where
   pure :: a -> Moi s a
-  pure = undefined
+  pure a = Moi $ (,) a
   (<*>) :: Moi s (a -> b) -> Moi s a -> Moi s b
   Moi sab <*> Moi sa = Moi $ \s -> let (fab, s') = sab s
                                        (a, s'') = sa s'
