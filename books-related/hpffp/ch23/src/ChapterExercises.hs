@@ -37,7 +37,7 @@ put :: s -> State s ()
 put s = State $ \s' -> ((), s)
 
 put' :: s -> State s ()
-put' s = State $ (,) ()
+put' s = State $ const ((),s)
 
 -- 3. Run the State with s and get the state that results:
 exec :: State s a -> s -> s
