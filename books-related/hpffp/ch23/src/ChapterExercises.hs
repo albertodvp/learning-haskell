@@ -1,4 +1,4 @@
--- |
+ -- |
 module ChapterExercises where
 
 import           Control.Applicative (liftA2)
@@ -23,11 +23,9 @@ instance Monad (State s) where
 
 
 -- 1. Construct a State where the state is also the value you return:
--- Kid version
 get :: State s s
 get = State $ \s -> (s, s)
 
--- Grown-up version
 get' :: State s s
 get' = State $ liftA2 (,) id id
 
