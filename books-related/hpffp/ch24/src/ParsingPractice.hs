@@ -29,5 +29,16 @@ one'' = one >> eof
 oneTwo'' :: Parser ()
 oneTwo'' = oneTwo >> eof
 
-s :: Parser String
-s = (string "1" >> eof) <|> (string "12" >> eof) <|> (string "123" >> eof)
+p123 :: Parser [Char]
+p123 = (string "123" <|> string "12" <|> string "1") <* eof
+
+
+stringFromCharP :: CharParsing m => String -> m String
+stringFromCharP (x:xs) = liftA2 (:) (char x) (stringFromCharP xs)
+stringFromCharP []     = pure mempty
+
+stringFromCharP' :: String -> Parser String
+stringFromCharP' = foldr f (pure mempty)
+  where
+    f c ps = liftA2 (:) (char c) ps
+

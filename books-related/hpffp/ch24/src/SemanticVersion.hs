@@ -3,10 +3,11 @@
 module SemanticVersion where
 
 import           Control.Applicative
+import           Control.Monad       (guard)
+import           Lexer               (ParserFlags)
 import           Text.Trifecta
-
 -- Strings
-data NumberOrString = NOIS Integer | NOSS String deriving Show
+data NumberOrString = NOIS Integer | NOSS String deriving (Show, Eq)
 
 type Major = Integer
 type Minor = Integer
@@ -14,30 +15,36 @@ type Patch = Integer
 type Release = [NumberOrString]
 type Metadata = [NumberOrString]
 
-data SemVer = SemVer Major Minor Patch Release Metadata deriving Show
+data SemVer = SemVer Major Minor Patch Release Metadata deriving (Show, Eq)
 
-parserRelease :: Parser
-parserRelease = (letter <|> digit)
-
-parseStringNOS :: Parser NumberOrString
-parseStringNOS = NOSS <$> some (letter <|> digit)
-
-
-parseNumberNOS :: Parser NumberOrString
-parseNumberNOS = NOIS <$> (integer <* eof)
+positiveInteger :: Parser Integer
+positiveInteger = do
+  x <- integer
+  guard $ x > 0
+  return x
 
 
-parseNOSForRelease :: Parser NumberOrString
-parseNOSForRelease =  try parseNumberNOS <|> (parseStringNOS <* eof)
+parseNOS :: Parser NumberOrString
+parseNOS = try (NOIS <$> positiveInteger) <|> (NOSS <$> some (char '-' <|> letter))
+
+parseNOS' :: Parser NumberOrString
+parseNOS' = try (NOIS <$> positiveInteger) <|> (NOSS <$> some (char '-' <|> alphaNum))
+
+parseRelease :: Parser Release
+parseRelease = do
+  _ <- char '-'
+  head <- parseNOS
+  tail <- many (char '.' *> parseNOS)
+  return $ head:tail
 
 
 parseMetadata :: Parser Metadata
-parseMetadata = undefined
+parseMetadata = do
+  _ <- char '+'
+  head <- parseNOS'
+  tail <- many (char '.' *> parseNOS')
+  return $ head:tail
 
-
--- TODO remove
-parseNumberOrString :: Parser NumberOrString
-parseNumberOrString = (NOIS <$> integer) <|> (NOSS <$> some (noneOf ".")) -- TODO
 
 parseSemVer :: Parser SemVer
 parseSemVer = do
@@ -46,5 +53,14 @@ parseSemVer = do
     minor <- integer
     _ <- char '.'
     patch <- integer
-    release <- try (some (char '-' *> parseNOSForRelease <* char '.')) <|> pure []
-    return $ SemVer major minor patch release []
+    release <- try parseRelease <|> pure []
+    metadata <- try parseMetadata <|> pure []
+    return $ SemVer major minor patch release metadata
+
+
+-- This is incomplete, see https://semver.org
+instance Ord SemVer where
+  compare (SemVer maj min patch pr md) (SemVer maj' min' patch' pr' md') =
+    let base = (maj, min, patch)
+        base' = (maj', min', patch')
+    in compare base base'
