@@ -2,7 +2,9 @@
 
 module LogParser where
 import           Control.Applicative
+import           Data.Bool           (Bool)
 import           Data.Map            (Map)
+import           GHC.Float           (integerLogBase)
 import           Text.RawString.QQ
 import           Text.Trifecta
 -- sum the time spent in each activity
@@ -12,95 +14,46 @@ data Date = Date {
   year  :: Integer,
   month :: Integer,
   day   :: Integer
-  } deriving Show
+  }
+instance Show Date where
+  show (Date y m d) = show y ++ "-" ++ show m ++ "-" ++ show d
+
+data Time = Time {
+  hour    :: Integer,
+  minutes :: Integer
+}
+
+instance Show Time where
+  show (Time h m) = show h ++ ":" ++ show m
+
 type Activity = String
-type StartingTime = Integer -- seconds from the begin of the day
 
-type RawEntry = (StartingTime, Activity)
-type LogFileRaw = [(Date, [RawEntry])]
-
-type TimeSpent = Integer -- delta seconds
-type Entries = Map StartingTime Activity
-
-type EntriesPerDate = Map Activity TimeSpent
-newtype LogFile = LogFile (Map Date [EntriesPerDate]) deriving Show
-
--- PARSER
--- 1) String -> LogFileRaw
--- Assumption 1: before the first entry, the activity is Sleep => every list has an implicit 00:00 Sleep in it's head
--- 2) LogFileRaw -> LogFileRaw
-
---LogFileRow -> LogFile
--- Assumption 2: a day does not re-occur on log
-
-
--- Parsers
--- 08:00 Breakfast
-parseRawEntry :: Parser RawEntry
-parseRawEntry = do
-  hour <- integer
-  _ <- char ':'
-  minutes <- integer
-  spaces -- TODO, the parser works even without these, don't know why, integer results in TokenParsing, that could be it
-  activity <- some letter
-
-  let startingTime = hour * 60 + minutes
-  many newline
-  return (startingTime, activity)
-
--- Parse date
--- # 2025-02-05
 parseDate :: Parser Date
-parseDate = liftA3
-              Date
-              (string "# " *> integer <* char '-')
-              (integer <* char '-')
-              integer
+parseDate = do
+  y <- integer
+  guard $ y >= 0
+  _ <- char '-'
+  m <- integer
+  guard $ m >= 1 && m < 12
+  _ <- char '-'
+  d <- integer
+  guard $ validateDay m d
 
-p :: Parser [Char]
-p =  some letter
+isLeapYear :: Integer -> Bool
+isLeapYear year
+  | year `mod` 400 == 0 = True
+  | year `mod` 4 == 0 && year `mod` 100 /= 0 = True
+  | otherwise = False
 
-skipComments :: Parser ()
-skipComments = do
-  spaces
-  string "--"
-  many $ noneOf "\n"
-  return ()
+-- TODO Positive integer
+validateDay :: Integer -> Integer -> Integer -> Bool
+validateDay year month day
+  | month == 2 = if isLeapYear year
+                 then day >= 1  && day < 31
+                 else day >= 1  && day < 31
+  | month `elem` [4, 6, 9, 11] = day >= 1  && day < 31
 
-parseLogFile :: Parser LogFileRaw
-parseLogFile = many singleDayParser
-  where
-    singleDayParser = do
-      many newline
-      date <- parseDate
-      many newline
-      entries <- many parseRawEntry
-      return (date, entries)
-simpleFile = [r|
-# 2025-02-05
-08:00 Breakfast
-09:00 Sanitizing moisture collector
-11:00 Exercising in high-grav gym
-12:00 Lunch
-13:00 Programming
-17:00 Commuting home in rover
-17:30 R&R
-19:00 Dinner
-21:00 Shower
-21:15 Read
-22:00 Sleep
-# 2025-02-07
-08:00 Breakfast
-09:00 Bumped head, passed out
-13:36 Wake up, headache
-13:37 Go to medbay
-13:40 Patch self up
-13:45 Commute home for rest
-14:15 Read
-21:00 Dinner
-21:15 Read
-22:00 Sleep
-|]
+
 
 
 file = [r|
