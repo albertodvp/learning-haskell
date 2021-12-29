@@ -1,3 +1,4 @@
+{-# LANGUAGE OverloadedStrings #-}
 module IP where
 
 import           Control.Applicative
@@ -5,18 +6,23 @@ import           Control.Monad
 import           Data.Bits
 import           Data.List
 import qualified Data.Map            as M
+import           Data.Maybe
 import           Data.Word
 import           Test.Hspec
 import           Text.Trifecta
 data IPAddress = IPAddress Word32 deriving (Eq, Ord)
 
 instance Show IPAddress where
-  show (IPAddress w) = intercalate "." $ show <$> [a,b,c,d]
+  show (IPAddress w) = intercalate "." $ show <$> res
     where
-      a = w `shiftR` 24
-      b = w `shiftR` 16 .&. (2^8 - 1)
-      c = w `shiftR` 8  .&. (2^8 - 1)
-      d = w `shiftL` 24
+      steps = [32, 24, 16, 8, 0]
+      res = zipWith f (tail steps) steps
+      f from to = getBitSlice32 from to w
+
+getBitSlice32 :: Int -> Int -> Word32 -> Word32
+getBitSlice32 from to w = w `shiftR` from .&. (2^dim - 1)
+  where
+    dim = to - from
 
 parseOctec :: Integral a => Parser a
 parseOctec = do
@@ -41,8 +47,39 @@ hexSymbols = ['0'..'9']++['A'..'F']
 hexMap :: Integral a => M.Map Char a
 hexMap = M.fromList $ zip hexSymbols [0..]
 
+hexMap' :: Integral a => M.Map a Char
+hexMap' = M.fromList $ zip [0..] hexSymbols
 
-data IPAddress6 = IPAddress6 Word64 Word64 deriving (Eq, Ord, Show)
+
+data IPAddress6 = IPAddress6 Word64 Word64 deriving (Eq, Ord)
+
+getBitSlice64 :: Int -> Int -> Word64 -> Word64
+getBitSlice64 from to w = w `shiftR` from .&. (2^dim - 1)
+  where
+    dim = to - from
+
+-- TODO smells too complex
+groupOfN :: Int -> [a] -> [[a]]
+groupOfN n xs = reverse $ snd $ foldl g (1, [[head xs]]) (tail xs)
+  where
+    g (i, b@(xs:xss)) a
+      | i `mod` n == 0 = (i+1, [a]:b)
+      | otherwise = (i+1, (xs ++ [a]):xss)
+
+
+showWord64ForIPv6 :: Word64 -> [Char]
+showWord64ForIPv6 w = prettyIPv6 res
+  where
+    steps = [64,60..0]
+    res = zipWith f (tail steps) steps
+    f from to = let k = getBitSlice64 from to w
+                in  fromMaybe undefined (M.lookup k hexMap')
+    prettyIPv6 = intercalate ":" . groupOfN 4
+
+
+instance Show IPAddress6 where
+  show (IPAddress6 w1 w2) = showWord64ForIPv6 w1 ++ ":" ++ showWord64ForIPv6 w2
+
 
 parseHex :: Integral a => Parser a
 parseHex = f <$> oneOf hexSymbols
