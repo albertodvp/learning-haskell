@@ -103,6 +103,10 @@ parseWord64 = do
 
 parseIpv6 :: Parser IPAddress6
 parseIpv6 = liftA2 IPAddress6 parseWord64 parseWord64
+-- Convert
+
+convert4to6 :: IPAddress -> IPAddress6
+convert4to6 (IPAddress w) = IPAddress6 0 (fromIntegral w)
 
 -- Tests
 
