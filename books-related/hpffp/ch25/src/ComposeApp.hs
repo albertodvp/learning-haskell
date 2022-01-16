@@ -24,8 +24,8 @@ instance (Foldable f, Foldable g) => Foldable (Compose f g) where
 
 instance (Traversable f, Traversable g) => Traversable (Compose f g) where
   traverse :: Applicative h => (a -> h b) -> Compose f g a -> h (Compose f g b)
-  traverse fhb cfga = hfgb
+  traverse ahb (Compose fga) = Compose <$> hfgb
     where
-      hfgb = sequence fhgb
-      fhgb = fmap sequence fghb
-      Compose fghb = fhb <$> cfga
+      hfgb = traverse (traverse ahb) fga
+
+
