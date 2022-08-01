@@ -28,4 +28,3 @@ instance (Traversable f, Traversable g) => Traversable (Compose f g) where
     where
       hfgb = traverse (traverse ahb) fga
 
-
