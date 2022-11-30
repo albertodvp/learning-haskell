@@ -1,2 +1,0 @@
-* To revise:
-Alternative type class
