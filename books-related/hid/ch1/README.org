@@ -1,0 +1,17 @@
+* Chapter 1 - Functions and types
+
+In FP we stucture programs in terms of input and output (instead of focussing on the steps to get that output)
+
+#+BEGIN_SRC haskell
+  :module + Data.List Data.Char
+  text <- readFile "../hid-examples-master/data/texts/hamlet.txt"
+  ws = words $ map toLower text
+  ws' = map (takeWhile isLetter . dropWhile (not . isLetter)) ws
+  cleanedWords = filter (not . null) ws'
+  uniqueWords = map head $ group $ sort cleanedWords
+  putStrLn $ show $ take 7 uniqueWords
+#+END_SRC
+
+#+RESULTS:
+: ghci> ghci> ghci> ghci> ghci> ["a","abhominably","abhorred","abilitie","aboord","aboue","about"]
+
