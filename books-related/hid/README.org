@@ -1,0 +1,2 @@
+* Haskell In Depth
+Notes and source code collected and produced while studying [[https://www.manning.com/books/haskell-in-depth][the book]]
