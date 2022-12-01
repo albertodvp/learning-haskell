@@ -1,0 +1,32 @@
+name:                aoc2022
+version:             0.1.0.0
+-- synopsis:
+-- description:
+homepage:            https://github.com/albertodvp/aoc2022#readme
+license:             BSD3
+license-file:        LICENSE
+author:              Alberto Fanton
+maintainer:          alberto.fanton@protonmail.com
+copyright:           Copyright (c) 2022 Alberto Fanton
+category:            Learning
+build-type:          Simple
+cabal-version:       >=1.10
+extra-source-files:  README.md
+                     CHANGELOG.md
+
+executable aoc2022
+  hs-source-dirs:      src
+  main-is:             Main.hs
+  default-language:    Haskell2010
+  other-modules:       Day01
+  build-depends:       base >= 4.7 && < 5
+                       , text
+  ghc-options:         -Wall
+                       -Wcompat
+                       -Widentities
+                       -Wincomplete-record-updates
+                       -Wincomplete-uni-patterns
+                       -Wmissing-export-lists
+                       -Wmissing-home-modules
+                       -Wpartial-fields
+                       -Wredundant-constraints

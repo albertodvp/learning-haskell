@@ -5,7 +5,8 @@ import Data.List (group, sort)
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 import System.Environment
- 
+
+main :: IO ()
 main = do
   [fname] <- getArgs
   text <- TIO.readFile fname
