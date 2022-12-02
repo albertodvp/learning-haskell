@@ -7,6 +7,7 @@ import qualified Data.Text.IO as TIO
 import Data.Char (isLetter)
 import Data.List (sortBy, sort, group)
 import Data.Ord
+
 type Entry = (T.Text, Int)
 type Vocabulary = [Entry]
 

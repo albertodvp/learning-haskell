@@ -7,7 +7,7 @@ maintainer:          "alberto.fanton@protonmail.com"
 copyright:           "Copyright (c) 2022 Alberto Fanton"
 
 extra-source-files:
-- README.md
+- README.org
 - CHANGELOG.md
 
 # Metadata used when publishing your package
@@ -23,6 +23,9 @@ dependencies:
 - base >= 4.7 && < 5
 - text
 - fmt
+- protolude
+- hspec
+- hspec-contrib
 
 ghc-options:
 - -Wall
