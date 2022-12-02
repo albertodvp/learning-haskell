@@ -12,6 +12,9 @@ In FP we stucture programs in terms of input and output (instead of focussing on
   putStrLn $ show $ take 7 uniqueWords
 #+END_SRC
 
-#+RESULTS:
-: ghci> ghci> ghci> ghci> ghci> ["a","abhominably","abhorred","abilitie","aboord","aboue","about"]
 
+** Summary
+- Try to keep pure functions and IO separated
+- Use `Text` instead of `String`
+- [[https://ro-che.info/articles/2016-04-02-descending-sort-haskell][Sorting reference]]
+- Formatting references: [[https://hackage.haskell.org/package/interpolatedstring-perl6-1.0.2/docs/Text-InterpolatedString-Perl6.html][interpolatedstring-perl6]], [[https://hackage.haskell.org/package/fmt][fmt]], [[https://hackage.haskell.org/package/formatting][formatting]]  
