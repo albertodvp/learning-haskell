@@ -71,11 +71,9 @@ main = hspec $ do
 
     it "computes value#3" $ do      
       value (Population [Stem "star"]) (Stem "s") (Stem "st") `shouldBe` Just 4
-  
-  
+    
     it "computes value with empty start" $ do
       value (Population [Stem "star", Stem "stop", Stem "street"]) (Stem "") (Stem "st") `shouldBe` Just 28
-  
   
   describe "query" $ do
     it "computes the 'n' most valuable super stems" $ do
@@ -87,3 +85,8 @@ main = hspec $ do
 
     it "computes the at-most 'n' most valuable super stems (empty)" $ do
       query 10 (Population [Stem "start", Stem "sum", Stem "stop", Stem "other"]) (Stem "") `shouldBe` [Stem "sum", Stem "stop", Stem "start", Stem "other"]
+
+    it "computes the query" $ do      
+      query 5 (Population (map Stem ["elder", "eldest", "eleuen", "els", "else", "element", "election", "elsenour", "elsonower"])) (Stem "el") `shouldBe` (map Stem ["elder", "eldest", "eleuen", "els", "else"])
+      
+       

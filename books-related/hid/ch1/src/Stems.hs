@@ -23,7 +23,7 @@ cleanLine = go . toS . Data.Text.toLower
   where
     go [] = []
     go (x:xs)
-      | elem x ".:,'()" = ' ':go(xs)
+      | elem x ".:,'()&!?;" = ' ':go(xs)
       | otherwise = x:go(xs)
       
 
@@ -54,11 +54,11 @@ subs x (Population xs) = Population $ filter (superStem x) xs
 size :: Population a -> Int
 size = length
 
-
 value :: Eq a => Population a -> Stem a -> Stem a -> Maybe Int
 value xs y x = (size (subs x xs) *) <$> dist y x
 
 
+-- TODO this implementation computes the 'n' less valuable
 -- | given a population and one stem in it computes the (at-most) 'n' most valuable
 -- super stems
 query :: Eq a =>
