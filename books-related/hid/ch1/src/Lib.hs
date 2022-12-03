@@ -1,9 +1,9 @@
 {-# LANGUAGE OverloadedStrings #-}
-module Lib where
+module Lib (extractVocab, allWordsReport, wordsCountReport, frequentWordsReport) where
 import Data.Text (Text)
 import Fmt
 import qualified Data.Text as T
-import qualified Data.Text.IO as TIO
+
 import Data.Char (isLetter)
 import Data.List (sortBy, sort, group)
 import Data.Ord

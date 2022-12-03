@@ -11,6 +11,8 @@ import Protolude
 
 import qualified Prelude
 
+import Data.Text (unpack)
+
 newtype Stem a = Stem {unStem :: [a]} deriving (Foldable, Show, Eq)
 
 comp :: Eq a => Stem a -> Stem a -> Maybe (Stem a)
@@ -24,14 +26,18 @@ superStem y = isJust . comp y
 dist :: Eq a => Stem a -> Stem a -> Maybe Int
 dist y = fmap length . comp y
 
-newtype Population a = Population [Stem a] deriving (Foldable)
+newtype Population a = Population [Stem a] deriving (Foldable, Show, Eq)
 
--- | read input from a file
+-- | read input from a file, e.g.
+-- word1
+-- word2
+-- word3
 population :: FilePath -> IO (Population Char)
-population = notImplemented
+population p = readFile p <&> Population . map (Stem . unpack) . lines
+
 
 subs :: Eq a => Stem a -> Population a -> Population a
-subs x (Population xs) = Population $ filter (isJust . comp x) xs
+subs x (Population xs) = Population $ filter (superStem x) xs
 
 size :: Population a -> Int
 size = length

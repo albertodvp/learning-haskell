@@ -20,12 +20,12 @@ extra-source-files:
 description:         Please see the README on GitHub at <https://github.com/albertodvp/ch1#readme>
 
 dependencies:
-- base >= 4.7 && < 5
+- base
 - text
 - fmt
-- protolude
 - hspec
 - hspec-contrib
+- protolude
 
 ghc-options:
 - -Wall

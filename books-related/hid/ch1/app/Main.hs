@@ -4,7 +4,7 @@ import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 import System.Environment ( getArgs )
 import Control.Monad (when)
-import Lib
+import Lib (extractVocab, allWordsReport, wordsCountReport, frequentWordsReport)
 
 processTextFile :: FilePath -> Bool -> Int ->  IO ()
 processTextFile fname withAllWords n = do
