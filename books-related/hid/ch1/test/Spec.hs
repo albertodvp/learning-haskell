@@ -2,10 +2,19 @@ import Test.Hspec
 
 import Stems
 import Control.Applicative (Alternative(empty))
+import Data.Text (pack)
 import Stems
 
 main :: IO ()
 main = hspec $ do
+  describe "cleanLine" $ do
+    it "cleans line substituting special characters and lower case" $ do
+      cleanLine (pack "Exeunt. Marching: after the which, a Peale of Ordenance are shot") `shouldBe` "exeunt  marching  after the which  a peale of ordenance are shot"
+  
+  describe "getStems" $ do
+    it "creates stems cleaning text" $ do
+      getStems (pack "Exeunt. Marching: after the which, a Peale of Ordenance are shot\r\noff.\r\n\r\n\r\nFINIS. The tragedie of HAMLET, Prince of Denmarke.\r\n") `shouldBe` [Stem "exeunt", Stem "marching", Stem "after", Stem "the", Stem "which", Stem "a", Stem "peale", Stem "of", Stem "ordenance", Stem "are", Stem "shot", Stem "off", Stem "finis", Stem "the", Stem"tragedie", Stem "of", Stem "hamlet", Stem "prince", Stem "of", Stem "denmarke"]
+    
   describe "comp" $ do
     it "proper comp" $ do
       comp (Stem "ab")  (Stem "abc") `shouldBe` Just (Stem "c")

@@ -11,10 +11,27 @@ import Protolude
 
 import qualified Prelude
 
-import Data.Text (unpack)
-
+import Data.Text (unpack, toLower, dropAround)
+import Data.Char (isLetter)
 
 newtype Stem a = Stem {unStem :: [a]} deriving (Foldable, Show, Eq)
+
+
+--
+cleanLine :: Text -> [Char]
+cleanLine = go . toS . Data.Text.toLower
+  where
+    go [] = []
+    go (x:xs)
+      | elem x ".:,'()" = ' ':go(xs)
+      | otherwise = x:go(xs)
+      
+
+-- TODO toS vs unpack
+getStems :: Text -> [Stem Char]
+getStems = map Stem . concat . map Prelude.words . filter (not . null) . map cleanAndTrim . lines
+  where
+    cleanAndTrim = cleanLine . dropAround (not . isLetter)
 
 comp :: Eq a => Stem a -> Stem a -> Maybe (Stem a)
 comp (Stem ys) (Stem xs)

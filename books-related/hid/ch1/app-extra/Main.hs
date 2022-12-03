@@ -10,16 +10,13 @@ import Data.Text (unpack)
 
 import System.Environment ( getArgs )
 
--- TODO why this import for data constructor
-import Stems (query, Population(Population), Stem(Stem, unStem))
+-- TODO why this import for data constructors
+import Stems (query, Population(Population), Stem(Stem, unStem), getStems)
 
 
--- | read input from a file, e.g.
--- word1
--- word2
--- word3
+-- | read input from a file e.g "./data/hamlet.txt/"
 population :: FilePath -> IO (Population Char)
-population p = readFile p <&> Population . map (Stem . unpack) . lines
+population p = readFile p <&> Population . getStems
 
 main :: IO b
 main = do
