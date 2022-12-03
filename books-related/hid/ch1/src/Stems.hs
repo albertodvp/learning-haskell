@@ -29,7 +29,7 @@ cleanLine = go . toS . Data.Text.toLower
 
 -- TODO toS vs unpack
 getStems :: Text -> [Stem Char]
-getStems = map Stem . concat . map Prelude.words . filter (not . null) . map cleanAndTrim . lines
+getStems = map (Stem . Prelude.head) . group . sort . concat . map Prelude.words . filter (not . null) . map cleanAndTrim . lines
   where
     cleanAndTrim = cleanLine . dropAround (not . isLetter)
 

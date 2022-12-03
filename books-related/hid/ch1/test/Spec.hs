@@ -10,10 +10,16 @@ main = hspec $ do
   describe "cleanLine" $ do
     it "cleans line substituting special characters and lower case" $ do
       cleanLine (pack "Exeunt. Marching: after the which, a Peale of Ordenance are shot") `shouldBe` "exeunt  marching  after the which  a peale of ordenance are shot"
+
+  it "removes duplicates" $ do
+      getStems (pack "Duplicate. Duplicate") `shouldBe` [Stem "duplicate"]
+      
+  it "orders" $ do
+      getStems (pack "second first") `shouldBe` [Stem "first", Stem "second"]
   
   describe "getStems" $ do
-    it "creates stems cleaning text" $ do
-      getStems (pack "Exeunt. Marching: after the which, a Peale of Ordenance are shot\r\noff.\r\n\r\n\r\nFINIS. The tragedie of HAMLET, Prince of Denmarke.\r\n") `shouldBe` [Stem "exeunt", Stem "marching", Stem "after", Stem "the", Stem "which", Stem "a", Stem "peale", Stem "of", Stem "ordenance", Stem "are", Stem "shot", Stem "off", Stem "finis", Stem "the", Stem"tragedie", Stem "of", Stem "hamlet", Stem "prince", Stem "of", Stem "denmarke"]
+    it "creates stems cleaning text, in order, un dup" $ do
+      getStems (pack "Exeunt. Marching: after the which, a Peale of Ordenance are shot\r\noff.\r\n\r\n\r\nFINIS. The tragedie of HAMLET, Prince of Denmarke.\r\n") `shouldBe` [Stem {unStem = "a"},Stem {unStem = "after"},Stem {unStem = "are"},Stem {unStem = "denmarke"},Stem {unStem = "exeunt"},Stem {unStem = "finis"},Stem {unStem = "hamlet"},Stem {unStem = "marching"},Stem {unStem = "of"}, Stem {unStem = "off"},Stem {unStem = "ordenance"},Stem {unStem = "peale"},Stem {unStem = "prince"},Stem {unStem = "shot"},Stem {unStem = "the"}, Stem {unStem = "tragedie"},Stem {unStem = "which"}]      
     
   describe "comp" $ do
     it "proper comp" $ do
