@@ -6,7 +6,7 @@ import Protolude
 import qualified Data.Set as S
 import qualified Data.Map as M
 import qualified Prelude
-import Data.Text (unpack, chunksOf)
+import Data.Text (unpack)
 
 type Rucksack = (S.Set Char, S.Set Char)
 
@@ -25,20 +25,13 @@ mkRucksack t = (S.fromList d1, S.fromList d2)
 
 getErrorItem :: Rucksack -> Char
 getErrorItem = S.elemAt 0 . uncurry S.intersection
-
-
-getPriority :: Char -> Int
-getPriority = (M.!) priorities
-
-getErrorPriority :: Rucksack -> Int
-getErrorPriority = getPriority . getErrorItem
-
-playP1 :: Text -> Int
-playP1 = sum . map (getErrorPriority . mkRucksack) . lines
-
 getGroupBadgeItem :: [Rucksack] -> Char
 getGroupBadgeItem = S.elemAt 0 . Prelude.foldl1 S.intersection . map (uncurry S.union)
 
+getPriority :: Char -> Int
+getPriority = (M.!) priorities
+getErrorPriority :: Rucksack -> Int
+getErrorPriority = getPriority . getErrorItem
 getGroupPriority :: [Rucksack]  -> Int
 getGroupPriority = getPriority . getGroupBadgeItem
 
@@ -48,13 +41,16 @@ groupsOf n xs = f:groupsOf n s
   where
     (f,s) = splitAt n xs
 
+playP1 :: [Text] -> Int
+playP1 = sum . map (getErrorPriority . mkRucksack)
 
-playP2 :: Text -> Int
-playP2 = sum . map getGroupPriority . groupsOf 3 . map mkRucksack . lines
+
+playP2 :: [Text] -> Int
+playP2 = sum . map getGroupPriority . groupsOf 3 . map mkRucksack
 
 -- day03
 fileName :: [Char]
 fileName = "inputs/ch03.txt"
 
 day03 :: IO ()
-day03 = readFile fileName >>= print . playP2
+day03 = readFile fileName >>= print . playP2 . lines
