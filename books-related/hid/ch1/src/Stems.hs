@@ -13,6 +13,7 @@ import qualified Prelude
 
 import Data.Text (unpack)
 
+
 newtype Stem a = Stem {unStem :: [a]} deriving (Foldable, Show, Eq)
 
 comp :: Eq a => Stem a -> Stem a -> Maybe (Stem a)
@@ -26,16 +27,10 @@ superStem y = isJust . comp y
 dist :: Eq a => Stem a -> Stem a -> Maybe Int
 dist y = fmap length . comp y
 
-newtype Population a = Population [Stem a] deriving (Foldable, Show, Eq)
-
--- | read input from a file, e.g.
--- word1
--- word2
--- word3
-population :: FilePath -> IO (Population Char)
-population p = readFile p <&> Population . map (Stem . unpack) . lines
+newtype Population a = Population {unPopulation :: [Stem a]} deriving (Foldable, Show, Eq)
 
 
+-- TODO: isn't this a "sups"?
 subs :: Eq a => Stem a -> Population a -> Population a
 subs x (Population xs) = Population $ filter (superStem x) xs
 
@@ -49,7 +44,7 @@ value xs y x = (size (subs x xs) *) <$> dist y x
 
 -- | given a population and one stem in it computes the (at-most) 'n' most valuable
 -- super stems
-query ::
+query :: Eq a =>
   -- | maximum number of super stems
   Int ->
   -- | stem population
@@ -58,16 +53,7 @@ query ::
   Stem a ->
   -- | super stems
   [Stem a]
-query = notImplemented
-
-mainNaive :: IO b
-mainNaive = do
-  [fp, n'] <- getArgs
-  p <- population fp
-  let q = query (Prelude.read n') p
-  forever $ do
-    x <- Prelude.getLine
-    traverse (Prelude.putStrLn . unStem) $ q $ Stem x
+query n pop base = take n $ sortOn (fromMaybe 0 . value pop base) (unPopulation $ subs base pop)
 
 
 -- TODO: refine the value function so that query returns something better :-) 
@@ -127,4 +113,4 @@ queryTrieO = notImplemented
 -- we perform searches
 
 
--- TODO: improve the trie so that it returns also matches for infixes
+-- TODO: improve the trie so that it returns also matches for infixeses

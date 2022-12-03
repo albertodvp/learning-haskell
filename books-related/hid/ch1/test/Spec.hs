@@ -2,7 +2,7 @@ import Test.Hspec
 
 import Stems
 import Control.Applicative (Alternative(empty))
-import Stems (value)
+import Stems
 
 main :: IO ()
 main = hspec $ do
@@ -50,11 +50,25 @@ main = hspec $ do
     it "does not compute value" $ do            
       value (Population [Stem "star", Stem "stop", Stem "street"]) (Stem "a") (Stem "st") `shouldBe` Nothing
     it "computes value" $ do      
-      value (Population [Stem "star", Stem "stop", Stem "street"]) (Stem "s") (Stem "st") `shouldBe` Just 1
+      value (Population [Stem "star", Stem "stop", Stem "street"]) (Stem "s") (Stem "st") `shouldBe` Just 14
     it "computes value#2" $ do      
-      value (Population [Stem "not match", Stem "star", Stem "stop", Stem "street"]) (Stem "s") (Stem "st") `shouldBe` Just 1
+      value (Population [Stem "not match", Stem "star", Stem "stop", Stem "street"]) (Stem "s") (Stem "st") `shouldBe` Just 14
+
+    it "computes value#3" $ do      
+      value (Population [Stem "star"]) (Stem "s") (Stem "st") `shouldBe` Just 4
+  
   
     it "computes value with empty start" $ do
-      value (Population [Stem "star", Stem "stop", Stem "street"]) (Stem "") (Stem "st") `shouldBe` Just 2
+      value (Population [Stem "star", Stem "stop", Stem "street"]) (Stem "") (Stem "st") `shouldBe` Just 28
   
   
+  describe "query" $ do
+    it "computes the 'n' most valuable super stems" $ do
+      query 2 (Population [Stem "start", Stem "sum", Stem "stop", Stem "other"]) (Stem "s") `shouldBe` [Stem "sum", Stem "stop"]
+
+    it "computes the at-most 'n' most valuable super stems" $ do
+      query 10 (Population [Stem "start", Stem "sum", Stem "stop", Stem "other"]) (Stem "s") `shouldBe` [Stem "sum", Stem "stop", Stem "start"]
+
+
+    it "computes the at-most 'n' most valuable super stems (empty)" $ do
+      query 10 (Population [Stem "start", Stem "sum", Stem "stop", Stem "other"]) (Stem "") `shouldBe` [Stem "sum", Stem "stop", Stem "start", Stem "other"]
