@@ -26,7 +26,7 @@ dependencies:
 - hspec
 - hspec-contrib
 - protolude
-
+- containers
 ghc-options:
 - -Wall
 - -Wcompat

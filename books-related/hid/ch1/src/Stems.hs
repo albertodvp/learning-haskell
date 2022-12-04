@@ -7,13 +7,13 @@
 
 module Stems where
 
-import Protolude
+import Protolude hiding (empty)
 
 import qualified Prelude
 
 import Data.Text (unpack, toLower, dropAround)
-import Data.Char (isLetter)
 
+import qualified Data.Map as M
 newtype Stem a = Stem {unStem :: [a]} deriving (Foldable, Show, Eq)
 
 
@@ -23,13 +23,13 @@ cleanLine = go . toS . Data.Text.toLower
   where
     go [] = []
     go (x:xs)
-      | elem x ".:,'()&!?;" = ' ':go(xs)
-      | otherwise = x:go(xs)
+      | x `elem` ".:,'()&!?;" = ' ':go xs
+      | otherwise = x:go xs
       
 
--- TODO toS vs unpack
+-- TODO toS vs unpack?
 getStems :: Text -> [Stem Char]
-getStems = map (Stem . Prelude.head) . group . sort . concat . map Prelude.words . filter (not . null) . map cleanAndTrim . lines
+getStems = map (Stem . Prelude.head) . group . sort . concatMap Prelude.words . filter (not . null) . map cleanAndTrim . lines
   where
     cleanAndTrim = cleanLine . dropAround (not . isLetter)
 
@@ -82,11 +82,24 @@ query n pop base = take n $ sortOn (fromMaybe 0 . value pop base) (unPopulation 
 
 type ToBeImplemented = Void
 
-newtype PopulationTrie a = PopulationTrie ToBeImplemented
+newtype PopulationTrie a = PopulationTrie (M.Map a (PopulationTrie a)) deriving (Eq, Show)
 
+empty :: PopulationTrie a
+empty =  PopulationTrie M.empty
+
+singleton :: Ord a => a -> PopulationTrie a
+singleton a = PopulationTrie $ M.fromList [(a, Stems.empty)]
+  
 -- | primitive operation to update a population trie with a new stem
-insert :: Stem a -> PopulationTrie a -> PopulationTrie a
-insert = notImplemented
+insert :: Ord a => Stem a -> PopulationTrie a -> PopulationTrie a
+insert (Stem []) pt = pt
+insert (Stem (x:xs)) (PopulationTrie prevM) = PopulationTrie newM
+  where
+    prevSubM = M.findWithDefault empty x prevM
+    newSubM = insert (Stem xs) prevSubM
+    newM = M.insert x newSubM prevM
+    
+    
 
 -- | select the trie of the given stem and traverse all children to
 -- rebuild the 'n' best super-stems

@@ -1,8 +1,8 @@
 import Test.Hspec
 
 import Stems
-import Control.Applicative (Alternative(empty))
 import Data.Text (pack)
+import qualified Data.Map as M
 import Stems
 
 main :: IO ()
@@ -87,6 +87,20 @@ main = hspec $ do
       query 10 (Population [Stem "start", Stem "sum", Stem "stop", Stem "other"]) (Stem "") `shouldBe` [Stem "sum", Stem "stop", Stem "start", Stem "other"]
 
     it "computes the query" $ do      
-      query 5 (Population (map Stem ["elder", "eldest", "eleuen", "els", "else", "element", "election", "elsenour", "elsonower"])) (Stem "el") `shouldBe` (map Stem ["elder", "eldest", "eleuen", "els", "else"])
-      
+      query 5 (Population (map Stem ["elder", "eldest", "eleuen", "els", "else", "element", "election", "elsenour", "elsonower"])) (Stem "el") `shouldBe` map Stem ["elder", "eldest", "eleuen", "els", "else"]
+
+    describe "PopulationTrie" $ do
+      it "creates an empty trie" $ do
+        empty `shouldBe` (PopulationTrie M.empty :: PopulationTrie Char)
+        
+      it "creates a singleton trie" $ do
+        singleton 'a' `shouldBe` PopulationTrie (M.fromList [('a', empty)])
+        
+      it "inserts values correctly" $ do
+        insert (Stem "a") empty `shouldBe` singleton 'a'
+
+      it "inserts values correctly#2" $ do
+        insert (Stem "abb") (insert (Stem "abc") empty) `shouldBe` PopulationTrie (M.fromList [('a', (PopulationTrie (M.fromList [('b', (PopulationTrie (M.fromList [('b', empty),('c', empty)])))])))])
+        
        
+

@@ -34,6 +34,7 @@ library
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       base
+    , containers
     , fmt
     , hspec
     , hspec-contrib
@@ -51,6 +52,7 @@ executable ch1-exe
   build-depends:
       base
     , ch1
+    , containers
     , fmt
     , hspec
     , hspec-contrib
@@ -68,6 +70,7 @@ executable ch1-extra-exe
   build-depends:
       base
     , ch1
+    , containers
     , fmt
     , hspec
     , hspec-contrib
@@ -86,6 +89,7 @@ test-suite ch1-test
   build-depends:
       base
     , ch1
+    , containers
     , fmt
     , hspec
     , hspec-contrib
