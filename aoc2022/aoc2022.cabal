@@ -26,6 +26,7 @@ executable aoc2022
                        , text
                        , protolude
                        , containers
+                       , megaparsec
   ghc-options:         -Wall
                        -Wcompat
                        -Widentities
