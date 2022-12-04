@@ -84,6 +84,14 @@ type ToBeImplemented = Void
 
 newtype PopulationTrie a = PopulationTrie (M.Map a (PopulationTrie a)) deriving (Eq, Show)
 
+instance Foldable PopulationTrie where
+  foldMap :: ( Monoid m) => (a -> m) -> PopulationTrie a -> m
+  foldMap f (PopulationTrie n)
+    | M.null n = mempty
+    | otherwise = Prelude.foldr g mempty (M.toList n)
+    where
+      g (a, p) m = f a <> foldMap f p <> m
+
 empty :: PopulationTrie a
 empty =  PopulationTrie M.empty
 
@@ -99,8 +107,15 @@ insert (Stem (x:xs)) (PopulationTrie prevM) = PopulationTrie newM
     newSubM = insert (Stem xs) prevSubM
     newM = M.insert x newSubM prevM
     
-    
+mkTrie :: Ord a => Population a -> PopulationTrie a
+mkTrie = foldr insert empty . unPopulation
 
+navigate :: Ord a => Stem a -> PopulationTrie a -> PopulationTrie a
+navigate (Stem []) p = p
+navigate (Stem (x:xs)) (PopulationTrie m) = case M.lookup x m of
+  Just trie -> navigate (Stem xs) trie
+  Nothing -> empty
+  
 -- | select the trie of the given stem and traverse all children to
 -- rebuild the 'n' best super-stems
 queryTrie ::
@@ -112,7 +127,7 @@ queryTrie ::
   Stem a ->
   -- | super stems
   [Stem a]
-queryTrie = notImplemented
+queryTrie = undefined
 
 -- TODO: prove that is possible/impossible to prune the search based on values only
 -- and that is unnecessary/necessary to store some other auxiliary information at

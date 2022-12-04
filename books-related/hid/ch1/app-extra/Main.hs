@@ -6,12 +6,7 @@ import Protolude
 
 import qualified Prelude
 
-import Data.Text (unpack)
-
-import System.Environment ( getArgs )
-
--- TODO why this import for data constructors
-import Stems (query, Population(Population), Stem(Stem, unStem), getStems)
+import Stems
 
 
 -- | read input from a file e.g "./data/hamlet.txt/"
