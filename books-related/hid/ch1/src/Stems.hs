@@ -85,7 +85,6 @@ type ToBeImplemented = Void
 newtype PopulationTrie a = PopulationTrie (M.Map a (PopulationTrie a)) deriving (Eq, Show)
 
 instance Foldable PopulationTrie where
-  foldMap :: ( Monoid m) => (a -> m) -> PopulationTrie a -> m
   foldMap f (PopulationTrie n)
     | M.null n = mempty
     | otherwise = Prelude.foldr g mempty (M.toList n)
@@ -110,6 +109,19 @@ insert (Stem (x:xs)) (PopulationTrie prevM) = PopulationTrie newM
 mkTrie :: Ord a => Population a -> PopulationTrie a
 mkTrie = foldr insert empty . unPopulation
 
+-- TODO understand why this duplication exists
+unTrie :: Ord a => PopulationTrie a -> [Stem a]
+unTrie p = map Prelude.head $ group $ sortOn unStem $ go (Stem []) p []
+  where
+    go :: Stem a -> PopulationTrie a -> [Stem a] -> [Stem a]
+    go base (PopulationTrie m) acc
+      | M.null m = acc
+      | otherwise = foldr (g base acc) [] (M.toList m)
+    g :: Stem a -> [Stem a] -> (a, PopulationTrie a) -> [Stem a] -> [Stem a]
+    g (Stem base) acc (a, q) ss = let newBase = Stem $ base++[a] 
+                                  in go newBase q (newBase:ss ++ acc)
+
+
 navigate :: Ord a => Stem a -> PopulationTrie a -> PopulationTrie a
 navigate (Stem []) p = p
 navigate (Stem (x:xs)) (PopulationTrie m) = case M.lookup x m of
@@ -118,7 +130,7 @@ navigate (Stem (x:xs)) (PopulationTrie m) = case M.lookup x m of
   
 -- | select the trie of the given stem and traverse all children to
 -- rebuild the 'n' best super-stems
-queryTrie ::
+queryTrie :: Ord a => 
   -- | maximum number of super stems
   Int ->
   -- | stem population
@@ -127,7 +139,7 @@ queryTrie ::
   Stem a ->
   -- | super stems
   [Stem a]
-queryTrie = undefined
+queryTrie num pop base = take num $ unTrie $ navigate base pop
 
 -- TODO: prove that is possible/impossible to prune the search based on values only
 -- and that is unnecessary/necessary to store some other auxiliary information at
