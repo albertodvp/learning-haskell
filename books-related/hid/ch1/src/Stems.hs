@@ -110,17 +110,19 @@ mkTrie :: Ord a => Population a -> PopulationTrie a
 mkTrie = foldr insert empty . unPopulation
 
 -- TODO understand why this duplication exists
-unTrie :: Ord a => PopulationTrie a -> [Stem a]
-unTrie p = map Prelude.head $ group $ sortOn unStem $ go (Stem []) p []
+unTrie :: Ord a => Stem a -> PopulationTrie a -> [Stem a]
+unTrie (Stem base) p = map (Stem . (base ++). unStem . Prelude.head) $ group $ sortOn unStem $ go (Stem []) p []
   where
     go :: Stem a -> PopulationTrie a -> [Stem a] -> [Stem a]
-    go base (PopulationTrie m) acc
+    go base' (PopulationTrie m) acc
       | M.null m = acc
-      | otherwise = foldr (g base acc) [] (M.toList m)
+      | otherwise = foldr (g base' acc) [] (M.toList m)
     g :: Stem a -> [Stem a] -> (a, PopulationTrie a) -> [Stem a] -> [Stem a]
-    g (Stem base) acc (a, q) ss = let newBase = Stem $ base++[a] 
+    g (Stem base') acc (a, q) ss = let newBase = Stem $ base'++[a] 
                                   in go newBase q (newBase:ss ++ acc)
 
+unTrie' :: Ord a => PopulationTrie a -> [Stem a]
+unTrie' = unTrie (Stem [])
 
 navigate :: Ord a => Stem a -> PopulationTrie a -> PopulationTrie a
 navigate (Stem []) p = p
@@ -139,7 +141,7 @@ queryTrie :: Ord a =>
   Stem a ->
   -- | super stems
   [Stem a]
-queryTrie num pop base = take num $ unTrie $ navigate base pop
+queryTrie num pop base = take num $ unTrie base $ navigate base pop
 
 -- TODO: prove that is possible/impossible to prune the search based on values only
 -- and that is unnecessary/necessary to store some other auxiliary information at
