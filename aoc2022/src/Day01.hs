@@ -5,7 +5,7 @@ import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 import Data.List (sortBy)
 fileName :: [Char]
-fileName = "inputs/ch01.txt"
+fileName = "inputs/day01.txt"
 
 parseNumber :: T.Text -> Int
 parseNumber = read . T.unpack

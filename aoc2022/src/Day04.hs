@@ -34,7 +34,7 @@ filterP2 :: SetFilter
 filterP2 s1 s2 = not $ S.disjoint s1 s2
 
 fileName :: [Char]
-fileName = "inputs/ch04.txt"
+fileName = "inputs/day04.txt"
 day04 :: IO ()
 --day04 = readFile fileName >>= print . play filterP1 . lines
 day04 = readFile fileName >>= print . play filterP2 . lines

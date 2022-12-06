@@ -79,7 +79,7 @@ play = playGame . mkGame
 
 -- day02
 fileName :: [Char]
-fileName = "inputs/ch02.txt"
+fileName = "inputs/day02.txt"
 
 day02 :: IO ()
 day02 = TIO.readFile fileName >>= print . play

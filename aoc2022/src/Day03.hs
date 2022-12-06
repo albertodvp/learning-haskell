@@ -50,7 +50,7 @@ playP2 = sum . map getGroupPriority . groupsOf 3 . map mkRucksack
 
 -- day03
 fileName :: [Char]
-fileName = "inputs/ch03.txt"
+fileName = "inputs/day03.txt"
 
 day03 :: IO ()
 day03 = readFile fileName >>= print . playP2 . lines
