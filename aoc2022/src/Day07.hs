@@ -1,4 +1,5 @@
 {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Day07 (day07) where
 
@@ -11,6 +12,9 @@ data FSNode = FSNode
     , childs :: [FSNode]
     }
     deriving (Show)
+
+emptyRoot :: FSNode
+emptyRoot = FSNode False "" 0 []
 
 day07 :: IO ()
 day07 = readFile "inputs/day07.txt" >>= print
