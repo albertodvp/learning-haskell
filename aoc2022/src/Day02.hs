@@ -1,13 +1,13 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Day02(day02) where
+module Day02 (day02) where
 
+import Control.Applicative (liftA2)
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
-import Control.Applicative (liftA2)
 
-data Choice = Rock | Paper | Scissors deriving Eq
+data Choice = Rock | Paper | Scissors deriving (Eq)
 data Result = Lose | Draw | Win
 type Round = (Choice, Choice)
 
@@ -19,26 +19,27 @@ parseResult _ = error "error"
 
 parseChoice :: Char -> Choice
 parseChoice c
-  | c `elem` ("AX" :: String) = Rock
-  | c `elem` ("BY" :: String) = Paper
-  | c `elem` ("CZ" :: String) = Scissors
-  | otherwise = error "error"
+    | c `elem` ("AX" :: String) = Rock
+    | c `elem` ("BY" :: String) = Paper
+    | c `elem` ("CZ" :: String) = Scissors
+    | otherwise = error "error"
 
 parseRoundP1 :: Text -> Round
 parseRoundP1 t = case T.unpack t of
-                   [c1, ' ', c2] -> (parseChoice c1, parseChoice c2)
-                   _ -> error "Wrong input"
+    [c1, ' ', c2] -> (parseChoice c1, parseChoice c2)
+    _ -> error "Wrong input"
 
 parseRoundP2 :: Text -> Round
 parseRoundP2 t = case T.unpack t of
-                   [c1, ' ', c2] -> let cc1 = parseChoice c1
-                                    in (cc1, choiceFromResult (parseResult c2) cc1)
-                   _ -> error "Wrong input"
+    [c1, ' ', c2] ->
+        let cc1 = parseChoice c1
+         in (cc1, choiceFromResult (parseResult c2) cc1)
+    _ -> error "Wrong input"
 
 choiceFromResult :: Result -> Choice -> Choice
 choiceFromResult Draw = id
 choiceFromResult Lose = choiceToWin . choiceToWin
-choiceFromResult Win = choiceToWin 
+choiceFromResult Win = choiceToWin
 
 choiceToWin :: Choice -> Choice
 choiceToWin Scissors = Rock
@@ -55,8 +56,8 @@ roundScore Rock Scissors = 6
 roundScore Paper Rock = 6
 roundScore Scissors Paper = 6
 roundScore x y
-  | x == y = 3
-  | otherwise = 0
+    | x == y = 3
+    | otherwise = 0
 
 playRound :: Round -> Int
 playRound (opponent, toPlay) = choiceValue toPlay + roundScore toPlay opponent

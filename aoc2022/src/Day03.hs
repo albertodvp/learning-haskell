@@ -1,20 +1,20 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 
-module Day03(day03) where
+module Day03 (day03) where
 
-import Protolude
-import qualified Data.Set as S
 import qualified Data.Map as M
-import qualified Prelude
+import qualified Data.Set as S
 import Data.Text (unpack)
+import Protolude
+import qualified Prelude
 
 type Rucksack = (S.Set Char, S.Set Char)
 
 priorities :: M.Map Char Int
 priorities = M.fromList $ zip chars nums
   where
-    nums = [1..26] ++ [27..52]
-    chars = ['a'..'z'] ++ ['A'..'Z']
+    nums = [1 .. 26] ++ [27 .. 52]
+    chars = ['a' .. 'z'] ++ ['A' .. 'Z']
 
 mkRucksack :: Text -> Rucksack
 mkRucksack t = (S.fromList d1, S.fromList d2)
@@ -32,14 +32,14 @@ getPriority :: Char -> Int
 getPriority = (M.!) priorities
 getErrorPriority :: Rucksack -> Int
 getErrorPriority = getPriority . getErrorItem
-getGroupPriority :: [Rucksack]  -> Int
+getGroupPriority :: [Rucksack] -> Int
 getGroupPriority = getPriority . getGroupBadgeItem
 
 groupsOf :: Int -> [a] -> [[a]]
 groupsOf _ [] = []
-groupsOf n xs = f:groupsOf n s
+groupsOf n xs = f : groupsOf n s
   where
-    (f,s) = splitAt n xs
+    (f, s) = splitAt n xs
 
 playP1 :: [Text] -> Int
 playP1 = sum . map (getErrorPriority . mkRucksack)
