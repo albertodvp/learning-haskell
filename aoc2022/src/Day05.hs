@@ -1,7 +1,7 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Day05 where
+module Day05 (day05) where
 
 import Protolude hiding (some, many, head)
 import Prelude (id)
@@ -13,63 +13,73 @@ import Data.Text (pack)
 type Crate = Char
 
 newtype Stack a = Stack [a] deriving (Show)
-
-data Move = Move {mFrom :: Int, mTo :: Int} deriving (Eq, Show)
+data Move = Move {mFrom :: Int, mTo :: Int, mTimes :: Int} deriving (Eq, Show)
 type Parser = Parsec Void Text
 type CrateLine = [Maybe Crate]
 
-pop :: Stack a -> Either Text (a, Stack a)
-pop (Stack []) = Left "Invalid move, empty stack"
-pop (Stack (x:xs)) = Right (x, Stack xs)
-push :: a -> Stack a -> Stack a
-push x (Stack xs) = Stack $ x:xs
+pop :: Int -> Stack a -> (Stack a, Stack a)
+pop n (Stack xs) = (Stack $ take n xs, Stack $ drop n xs)
+push :: Stack a -> Stack a -> Stack a
+push (Stack xs) (Stack ys) = Stack $ xs ++ ys
 head :: Stack a -> Either Text a
-head s = fst <$> pop s
+head (Stack []) = Left "Empty stack"
+head (Stack (x:_)) = Right x
 replaceAt :: Int -> a -> [a] -> [a]
 replaceAt n y xs = take n xs ++ [y] ++ drop (n+1) xs
 mkCrateStacks :: [CrateLine] -> [Stack Crate]
 mkCrateStacks = map (Stack . catMaybes) . transpose
-mkMoves :: Int -> Int -> Int -> [Move]
-mkMoves times from1Based to1Based = replicate times $ Move (from1Based - 1) (to1Based - 1)
+
+move :: Move -> [Stack Crate] -> [Stack Crate]
+move m ss = replaceAt fromIndex newFromStack (replaceAt toIndex newToStack ss)
+  where
+    fromIndex = mFrom m
+    toIndex = mTo m
+    times = mTimes m
+    (popedStack, newFromStack) = pop times $ ss !! fromIndex
+    newToStack = push popedStack $ ss !! toIndex
+
+moves  :: [Stack Crate] -> [Move] -> [Crate]
+moves ss = rights . map head . foldr move ss
 
 parseCrate :: Parser (Maybe Crate)
 parseCrate = Just <$> between (char '[') (char ']') L.charLiteral <|> Nothing <$ string "   "
 parseCrateLine :: Parser CrateLine
 parseCrateLine = sepBy parseCrate $ char ' '
 
-parseMovesP1 :: Parser [Move]
-parseMovesP1 = mkMoves <$> (string "move " >> L.decimal) <*> between (string " from ") (string " to ") L.decimal <*> L.decimal
+parseMoveLineP1 :: Parser [Move]
+parseMoveLineP1 = do
+  _ <- string "move "
+  times <- L.decimal
+  from1Based <-  between (string " from ") (string " to ") L.decimal
+  to1Based <- L.decimal
+  return $ replicate times $ Move (from1Based - 1) (to1Based - 1) 1
+parseMoveLinesP1 :: Parser [Move]
+parseMoveLinesP1 = concat <$> some (parseMoveLineP1 <* eol)
+parseMoveLineP2 :: Parser Move
+parseMoveLineP2 = do
+  _ <- string "move "
+  times <- L.decimal
+  from1Based <-  between (string " from ") (string " to ") L.decimal
+  to1Based <- L.decimal
+  return $ Move (from1Based - 1) (to1Based - 1) times
+parseMoveLinesP2 :: Parser [Move]
+parseMoveLinesP2 = some (parseMoveLineP2 <* eol)
 
-parseGame :: Parser ([Stack Crate], [Move])
-parseGame = do
+
+parseGame :: Parser [Move] -> Parser ([Stack Crate], [Move])
+parseGame parserMoves = do
   sc <- some (parseCrateLine <* eol)
   _ <- takeWhileP Nothing (/= '\n') >> eol >> eol
-  moves <- some (parseMoves  <* eol)
-  return (mkCrateStacks sc, (concat moves))
+  ms <- parserMoves
+  return (mkCrateStacks sc, ms)
 
-move :: Move -> [Stack Crate] -> Either Text [Stack Crate]
-move move stacks = do
-  let fromIndex = mFrom move
-  let toIndex = mTo move
-  (x, newFromStack) <- pop $ stacks !! fromIndex
-  let newToStack = push x $ stacks !! toIndex
-  return $ replaceAt fromIndex newFromStack (replaceAt toIndex newToStack stacks)
+finalParser :: Parser [Move] -> Parser [Crate]
+finalParser parserMoves = uncurry moves <$> parseGame parserMoves
 
--- TODO: is there a better way to write this?
-moves :: [Stack Crate] -> [Move] -> Either Text [Stack Crate]
-moves stacks [] = Right stacks
-moves stacks (m:ms) = do
-  newStacks <- move m stacks
-  moves newStacks ms
+play  :: Parser [Move] -> Text -> Text
+play parserMoves = pack . either errorBundlePretty id . parse (finalParser parserMoves) ""
 
-play :: Text -> Text
-play t = either (show . bundleErrors) f (runParser parseGame "" t)
-  where
-    f (stacks, ms) = either id pack $ do
-      newStacks <- moves stacks ms
-      return $ rights $ map head newStacks
-      
 fileName :: [Char]
 fileName = "inputs/day05.txt"
 day05 :: IO ()
-day05 = readFile fileName >>= print . play
+day05 = readFile fileName >>= print . play parseMoveLinesP2
