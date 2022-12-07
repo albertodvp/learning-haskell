@@ -28,6 +28,8 @@ executable aoc2022
                        , protolude
                        , containers
                        , megaparsec
+                       , fourmolu
+                       , stylish-haskell
   ghc-options:         -Wall
                        -Wcompat
                        -Widentities
