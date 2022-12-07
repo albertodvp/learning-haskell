@@ -10,8 +10,8 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    runs-on: ubuntu-latest (aoc2022)
+  build(aoc2022):
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: aoc22
