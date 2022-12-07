@@ -14,24 +14,29 @@ cabal-version:       >=1.10
 extra-source-files:  README.md
                      CHANGELOG.md
 
-executable aoc2022
+library
   hs-source-dirs:      src
-  main-is:             Main.hs
-  default-language:    Haskell2010
-  other-modules:         Day01
+  exposed-modules:       Day01
                        , Day02
                        , Day03
                        , Day04
                        , Day05
                        , Day06
                        , Day07                                             
-  build-depends:         base >= 4.7 && < 5
-                       , text
-                       , protolude
+  build-depends:       base >= 4.7 && < 5
                        , containers
-                       , megaparsec
                        , fourmolu
                        , hlint
+                       , megaparsec
+                       , protolude
+                       , text
+  default-language:    Haskell2010
+
+executable aoc2022-exe
+  hs-source-dirs:      app
+  main-is:             Main.hs
+  build-depends:         aoc2022
+                       , base >= 4.7 && < 5
   ghc-options:         -Wall
                        -Wcompat
                        -Widentities
@@ -41,3 +46,14 @@ executable aoc2022
                        -Wmissing-home-modules
                        -Wpartial-fields
                        -Wredundant-constraints
+                       
+test-suite aoc2022-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  hs-source-dirs: test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends: HUnit >= 1.6.2.0
+               , aoc2022
+               , base >= 4.7 && < 5
+  default-language: Haskell2010
+  other-modules: Day07Test
