@@ -29,6 +29,7 @@ executable aoc2022
                        , containers
                        , megaparsec
                        , fourmolu
+                       , hlint
   ghc-options:         -Wall
                        -Wcompat
                        -Widentities

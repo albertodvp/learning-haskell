@@ -11,37 +11,30 @@ permissions:
 
 jobs:
   build-aoc2022:
+    name: Build aoc2022
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: aoc22
+        working-directory: aoc2022
     steps:
     - uses: actions/checkout@v3
-    - uses: actions/setup-haskell@v1
+    - uses: haskell/actions/setup@v2
       with:
-        ghc-version: '8.10.3'
-        cabal-version: '3.2'
-    - name: Cache
-      uses: actions/cache@v3
-      env:
-        cache-name: cache-cabal
+        ghc-version: '9.2.5'
+        enable-stack: true
+        stack-version: 'latest'
+    - name: Cache .stack-work
+      uses: actions/cache@v3      
       with:
-        path: ~/.cabal
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.cabal') }}-${{ hashFiles('**/cabal.project') }}
+        path: .stack-work
+        key: ${{ runner.os }}-stack-work-${{ hashFiles('stack.yaml') }}-${{ hashFiles('package.yaml') }}-${{ hashFiles('**/*.hs') }}
         restore-keys: |
-          ${{ runner.os }}-build-${{ env.cache-name }}-
-          ${{ runner.os }}-build-
-          ${{ runner.os }}-
-
-    - name: Install dependencies
-      run: |
-        cabal update
-        cabal build --only-dependencies --enable-tests --enable-benchmarks
+          ${{ runner.os }}-stack-work- 
     - name: Build
-      run: cabal build
-    - name: Stilish
-      run: cabal build
-    - name: Format 
-      run: cabal run fourmolu -- --mode check src
+      run: stack build
+    - name: Format check
+      run: stack exec fourmolu -- --mode check src
+    - name: HLint
+      run: stack exec hlint -- src
     - name: Run 0-exits 
-      run: cabal run
+      run: stack run
