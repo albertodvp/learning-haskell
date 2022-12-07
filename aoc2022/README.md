@@ -10,3 +10,8 @@ stack run
 ```bash
 stack exec fourmolu -- -i src
 ```
+
+### Run the tests
+```bash
+stack test
+```
