@@ -28,7 +28,7 @@ head s = fst <$> pop s
 replaceAt :: Int -> a -> [a] -> [a]
 replaceAt n y xs = take n xs ++ [y] ++ drop (n+1) xs
 mkCrateStacks :: [CrateLine] -> [Stack Crate]
-mkCrateStacks = map (Stack . reverse . catMaybes) . transpose
+mkCrateStacks = map (Stack . catMaybes) . transpose
 mkMoves :: Int -> Int -> Int -> [Move]
 mkMoves times from1Based to1Based = replicate times $ Move (from1Based - 1) (to1Based - 1)
 
@@ -37,8 +37,8 @@ parseCrate = Just <$> between (char '[') (char ']') L.charLiteral <|> Nothing <$
 parseCrateLine :: Parser CrateLine
 parseCrateLine = sepBy parseCrate $ char ' '
 
-parseMoves :: Parser [Move]
-parseMoves = mkMoves <$> (string "move " >> L.decimal) <*> between (string " from ") (string " to ") L.decimal <*> L.decimal
+parseMovesP1 :: Parser [Move]
+parseMovesP1 = mkMoves <$> (string "move " >> L.decimal) <*> between (string " from ") (string " to ") L.decimal <*> L.decimal
 
 parseGame :: Parser ([Stack Crate], [Move])
 parseGame = do
@@ -61,7 +61,7 @@ moves stacks [] = Right stacks
 moves stacks (m:ms) = do
   newStacks <- move m stacks
   moves newStacks ms
-  
+
 play :: Text -> Text
 play t = either (show . bundleErrors) f (runParser parseGame "" t)
   where
