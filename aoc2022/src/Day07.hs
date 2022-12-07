@@ -1,20 +1,27 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 
-module Day07 (day07) where
+module Day07 where
 
 import Protolude
-
-data FSNode = FSNode
-    { isFile :: Bool
-    , name :: Text
-    , size :: Int
-    , childs :: [FSNode]
-    }
-    deriving (Show)
+import qualified Data.Text as T
+type Size = Int
+type NodeName = Text
+data FSNode = FSNode { name :: NodeName, size :: Size, children :: Maybe [FSNode] } deriving (Show, Eq)
 
 emptyRoot :: FSNode
-emptyRoot = FSNode False "" 0 []
+emptyRoot = FSNode "" 0 $ Just []
+mkDirNode :: NodeName -> FSNode
+mkDirNode dirName = FSNode dirName 0 (Just [])
+mkFileNode :: NodeName -> Size -> FSNode
+mkFileNode fileName size = FSNode fileName size Nothing
+
+insertDir :: NodeName -> FSNode -> Either Text FSNode
+insertDir _ (FSNode fileName _ Nothing) = Left $ T.append fileName " is a file"
+insertDir dirName (FSNode currDirName size (Just nodes)) = Right $ FSNode currDirName size (Just (mkDirNode dirName:nodes))
+insertFile :: NodeName -> Size -> FSNode -> Either Text FSNode
+insertFile _ _ (FSNode fileName _ Nothing) = Left $ T.append fileName " is a file"
+insertFile fileName fileSize (FSNode currDirName size (Just nodes)) = Right $ FSNode currDirName (fileSize + size) (Just (mkFileNode fileName fileSize:nodes))
 
 day07 :: IO ()
 day07 = readFile "inputs/day07.txt" >>= print
