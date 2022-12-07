@@ -33,9 +33,9 @@ jobs:
     - name: Build
       run: stack build
     - name: Format check
-      run: stack exec fourmolu -- --mode check src
+      run: stack exec fourmolu -- --mode check src test
     - name: HLint
-      run: stack exec hlint -- src
+      run: stack exec hlint -- src test
     - name: Run tests
       run: stack test
     - name: Run 0-exits 
