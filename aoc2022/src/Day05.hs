@@ -1,97 +1,75 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Day05(day05) where
+module Day05 where
 
 import Protolude hiding (some, many, head)
-import Prelude (error)
+import Prelude (id)
 import Data.List ((!!))
 import Text.Megaparsec
 import Text.Megaparsec.Char (char, string, eol)
-
 import qualified Text.Megaparsec.Char.Lexer as L
-
--- NOTE: 'undefined' on code represents the assumptions on the input data (always legic and clean),
--- these assumptions could have been encoded in more precise types and/or functions
--- but I preferred to show these explicitly. It's likely I'll change the approach
--- tomorrow ¯\_(ツ)_/¯
-
+import Data.Text (pack)
 type Crate = Char
 
 newtype Stack a = Stack [a] deriving (Show)
 
 data Move = Move {mFrom :: Int, mTo :: Int} deriving (Eq, Show)
-
 type Parser = Parsec Void Text
 type CrateLine = [Maybe Crate]
 
-pop :: Stack a -> Maybe (a, Stack a)
-pop (Stack []) = Nothing
-pop (Stack (x:xs)) = Just (x, Stack xs)
-
+pop :: Stack a -> Either Text (a, Stack a)
+pop (Stack []) = Left "Invalid move, empty stack"
+pop (Stack (x:xs)) = Right (x, Stack xs)
 push :: a -> Stack a -> Stack a
 push x (Stack xs) = Stack $ x:xs
-
-head :: Stack a -> Maybe a
+head :: Stack a -> Either Text a
 head s = fst <$> pop s
-
-
 replaceAt :: Int -> a -> [a] -> [a]
 replaceAt n y xs = take n xs ++ [y] ++ drop (n+1) xs
-
-
-ss :: Parser Char
-ss = char ' '
+mkCrateStacks :: [CrateLine] -> [Stack Crate]
+mkCrateStacks = map (Stack . reverse . catMaybes) . transpose
+mkMoves :: Int -> Int -> Int -> [Move]
+mkMoves times from1Based to1Based = replicate times $ Move (from1Based - 1) (to1Based - 1)
 
 parseCrate :: Parser (Maybe Crate)
-parseCrate = Just <$> between (char '[') (char ']') L.charLiteral <|> const Nothing <$> (ss >> ss >> ss)
-
+parseCrate = Just <$> between (char '[') (char ']') L.charLiteral <|> Nothing <$ string "   "
 parseCrateLine :: Parser CrateLine
 parseCrateLine = sepBy parseCrate $ char ' '
 
 parseMoves :: Parser [Move]
-parseMoves = do
-  _ <- string "move "
-  times <- L.decimal
-  from <-  between (string " from ") (string " to ") L.decimal
-  to <- L.decimal
-  return $ replicate times $ Move (from - 1) (to-1)
+parseMoves = mkMoves <$> (string "move " >> L.decimal) <*> between (string " from ") (string " to ") L.decimal <*> L.decimal
 
-mkCrateStacks :: [CrateLine] -> [Stack Crate]
-mkCrateStacks = map (Stack . reverse . catMaybes) . transpose
-
-inputParser :: Parser ([Stack Crate], [Move])
-inputParser = do
+parseGame :: Parser ([Stack Crate], [Move])
+parseGame = do
   sc <- some (parseCrateLine <* eol)
-  moves <- many parseMoves
+  _ <- takeWhileP Nothing (/= '\n') >> eol >> eol
+  moves <- some (parseMoves  <* eol)
   return (mkCrateStacks sc, (concat moves))
 
------------
--- Logic --
------------
+move :: Move -> [Stack Crate] -> Either Text [Stack Crate]
+move move stacks = do
+  let fromIndex = mFrom move
+  let toIndex = mTo move
+  (x, newFromStack) <- pop $ stacks !! fromIndex
+  let newToStack = push x $ stacks !! toIndex
+  return $ replaceAt fromIndex newFromStack (replaceAt toIndex newToStack stacks)
 
- -- NOTE: here I assume there are a only legit moves
-move :: Move -> [Stack Crate] -> [Stack Crate]
-move  move stacks = let fromIndex = mFrom move
-                        toIndex = mTo move
-                        (x, newFromStack) = fromMaybe (error "empty stack (should be illegal)") $ pop $ stacks !! fromIndex
-                        newToStack = push x $ stacks !! toIndex
-                    in replaceAt fromIndex newFromStack (replaceAt toIndex newToStack stacks)
-                       
-
-moves :: [Stack Crate] -> [Move] -> [Stack Crate]
-moves stacks = foldr move stacks
-
-
-play :: Text -> [Crate]
-play t= fromRight (error "parsing error (should be impossible)") $ runParser (catMaybes . map head . uncurry moves <$> inputParser) "" t
-
------------
--- Main --
------------
-
+-- TODO: is there a better way to write this?
+moves :: [Stack Crate] -> [Move] -> Either Text [Stack Crate]
+moves stacks [] = Right stacks
+moves stacks (m:ms) = do
+  newStacks <- move m stacks
+  moves newStacks ms
+  
+play :: Text -> Text
+play t = either (show . bundleErrors) f (runParser parseGame "" t)
+  where
+    f (stacks, ms) = either id pack $ do
+      newStacks <- moves stacks ms
+      return $ rights $ map head newStacks
+      
 fileName :: [Char]
 fileName = "inputs/day05.txt"
 day05 :: IO ()
--- day05 = readFile fileName >>= print . play
-day05 = readFile fileName >>= parseTest inputParser
+day05 = readFile fileName >>= print . play
