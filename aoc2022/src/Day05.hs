@@ -29,8 +29,8 @@ replaceAt n y xs = take n xs ++ [y] ++ drop (n+1) xs
 mkCrateStacks :: [CrateLine] -> [Stack Crate]
 mkCrateStacks = map (Stack . catMaybes) . transpose
 
-move :: Move -> [Stack Crate] -> [Stack Crate]
-move m ss = replaceAt fromIndex newFromStack (replaceAt toIndex newToStack ss)
+move :: [Stack Crate] -> Move  -> [Stack Crate]
+move ss m = replaceAt fromIndex newFromStack (replaceAt toIndex newToStack ss)
   where
     fromIndex = mFrom m
     toIndex = mTo m
@@ -39,7 +39,7 @@ move m ss = replaceAt fromIndex newFromStack (replaceAt toIndex newToStack ss)
     newToStack = push popedStack $ ss !! toIndex
 
 moves  :: [Stack Crate] -> [Move] -> [Crate]
-moves ss = rights . map head . foldr move ss
+moves ss = rights . map head . foldl move ss
 
 parseCrate :: Parser (Maybe Crate)
 parseCrate = Just <$> between (char '[') (char ']') L.charLiteral <|> Nothing <$ string "   "
@@ -65,7 +65,6 @@ parseMoveLineP2 = do
 parseMoveLinesP2 :: Parser [Move]
 parseMoveLinesP2 = some (parseMoveLineP2 <* eol)
 
-
 parseGame :: Parser [Move] -> Parser ([Stack Crate], [Move])
 parseGame parserMoves = do
   sc <- some (parseCrateLine <* eol)
@@ -79,7 +78,5 @@ finalParser parserMoves = uncurry moves <$> parseGame parserMoves
 play  :: Parser [Move] -> Text -> Text
 play parserMoves = pack . either errorBundlePretty id . parse (finalParser parserMoves) ""
 
-fileName :: [Char]
-fileName = "inputs/day05.txt"
 day05 :: IO ()
-day05 = readFile fileName >>= print . play parseMoveLinesP2
+day05 = readFile "inputs/day05.txt" >>= print . liftA2 (,) (play parseMoveLinesP1) (play parseMoveLinesP2)
