@@ -43,5 +43,7 @@ jobs:
       run: stack exec fourmolu -- --mode check src
     - name: HLint
       run: stack exec hlint -- src
+    - name: Run tests
+      run: stack test
     - name: Run 0-exits 
       run: stack run
