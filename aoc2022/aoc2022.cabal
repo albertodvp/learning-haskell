@@ -29,7 +29,6 @@ executable aoc2022
                        , containers
                        , megaparsec
                        , fourmolu
-                       , stylish-haskell
   ghc-options:         -Wall
                        -Wcompat
                        -Widentities
