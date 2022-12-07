@@ -1,7 +1,7 @@
 name:                aoc2022
 version:             0.1.0.0
--- synopsis:
--- description:
+synopsis:            "AOC2022"
+description:         "Advent of code 2022"
 homepage:            https://github.com/albertodvp/aoc2022#readme
 license:             BSD3
 license-file:        LICENSE
