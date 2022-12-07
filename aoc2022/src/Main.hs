@@ -6,6 +6,7 @@ import Day03 (day03)
 import Day04 (day04)
 import Day05 (day05)
 import Day06 (day06)
+import Day07 (day07)
 
 days :: [IO ()]
 days =
@@ -15,6 +16,7 @@ days =
     , day04
     , day05
     , day06
+    , day07    
     ]
 
 main :: IO [()]

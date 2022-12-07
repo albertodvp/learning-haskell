@@ -22,4 +22,4 @@ p2 :: [Char] -> Int
 p2 = fromJust . firstNDiff 14
 
 day06 :: IO ()
-day06 = readFile "inputs/day06.txt" >>= print . liftA2 (,) (p1) (p2) . unpack
+day06 = readFile "inputs/day06.txt" >>= print . liftA2 (,) p1 p2 . unpack
