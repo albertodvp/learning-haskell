@@ -30,6 +30,7 @@ library
                        , megaparsec
                        , protolude
                        , text
+                       , parser-combinators
   default-language:    Haskell2010
 
 executable aoc2022-exe
@@ -55,5 +56,6 @@ test-suite aoc2022-test
   build-depends: HUnit >= 1.6.2.0
                , aoc2022
                , base >= 4.7 && < 5
+               , megaparsec
   default-language: Haskell2010
   other-modules: Day07Test
