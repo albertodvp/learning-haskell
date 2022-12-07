@@ -27,6 +27,7 @@ library
                        , containers
                        , fourmolu
                        , hlint
+                       , apply-refact                  
                        , megaparsec
                        , protolude
                        , text

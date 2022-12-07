@@ -3,13 +3,14 @@
 
 module Day07 where
 
+import Control.Applicative (liftA2)
+import Control.Applicative.Combinators (choice)
 import qualified Data.Text as T
 import Protolude
 import Text.Megaparsec (Parsec, takeWhile1P)
-import Text.Megaparsec.Char (string, char, eol)
+import Text.Megaparsec.Char (char, eol, string)
 import qualified Text.Megaparsec.Char.Lexer as L
-import Control.Applicative (liftA2)
-import Control.Applicative.Combinators (choice)
+
 type Size = Int
 type NodeName = Text
 data FSNode = FSNode {name :: NodeName, size :: Size, children :: Maybe [FSNode]} deriving (Show, Eq)
@@ -41,9 +42,9 @@ changeDirP :: Parser Command
 changeDirP = ChangeDir <$> ((string "$ cd " >> takeWhile1P Nothing (/= '\n')) <* eol)
 listP :: Parser Command
 listP = do
-  _ <- string "$ ls" >> eol
-  files <- many $ liftA2 (,) (L.decimal <* string " ") (takeWhile1P Nothing (/= '\n') <* eol)
-  return $ List files
+    _ <- string "$ ls" >> eol
+    files <- many $ liftA2 (,) (L.decimal <* string " ") (takeWhile1P Nothing (/= '\n') <* eol)
+    return $ List files
 
 commandsP :: Parser [Command]
 commandsP = many $ choice [changeRootP, changeBackP, changeDirP, listP]

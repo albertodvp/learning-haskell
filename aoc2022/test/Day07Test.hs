@@ -19,5 +19,5 @@ day07_tests =
     , "parse" ~: "parse change back" ~: parse changeBackP "" "$ cd ..\n" ~=? Right ChangeBack
     , "parse" ~: "parse change dir" ~: parse changeDirP "" "$ cd dirname\n" ~=? Right (ChangeDir "dirname")
     , "parse" ~: "parse list" ~: parse listP "" "$ ls\n10 filename1.ext1\n20 filename2.ext2\n" ~=? Right (List [(10, "filename1.ext1"), (20, "filename2.ext2")])
-    , "parse" ~: "parse commands" ~: parse commandsP "" "$ cd ..\n$ ls\n10 filename1.ext1\n20 filename2.ext2\n" ~=? Right ([ChangeBack, List [(10, "filename1.ext1"), (20, "filename2.ext2")]])
+    , "parse" ~: "parse commands" ~: parse commandsP "" "$ cd ..\n$ ls\n10 filename1.ext1\n20 filename2.ext2\n" ~=? Right [ChangeBack, List [(10, "filename1.ext1"), (20, "filename2.ext2")]]
     ]
