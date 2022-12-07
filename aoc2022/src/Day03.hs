@@ -43,14 +43,8 @@ groupsOf n xs = f:groupsOf n s
 
 playP1 :: [Text] -> Int
 playP1 = sum . map (getErrorPriority . mkRucksack)
-
-
 playP2 :: [Text] -> Int
 playP2 = sum . map getGroupPriority . groupsOf 3 . map mkRucksack
 
--- day03
-fileName :: [Char]
-fileName = "inputs/day03.txt"
-
 day03 :: IO ()
-day03 = readFile fileName >>= print . playP2 . lines
+day03 = readFile "inputs/day03.txt" >>= print . liftA2 (,) playP1 playP2 . lines

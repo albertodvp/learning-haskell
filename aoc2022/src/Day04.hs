@@ -27,15 +27,11 @@ lineParser = f <$> setParser <*> char ',' <*> setParser
 play :: SetFilter -> [Text] -> Int
 play setFilter= length . filter (uncurry setFilter) . rights . map (runParser lineParser "")
 
---filterP1 :: SetFilter
---filterP1 = S.isSubsetOf
-
+filterP1 :: SetFilter
+filterP1 = S.isSubsetOf
 filterP2 :: SetFilter
 filterP2 s1 s2 = not $ S.disjoint s1 s2
 
-fileName :: [Char]
-fileName = "inputs/day04.txt"
 day04 :: IO ()
---day04 = readFile fileName >>= print . play filterP1 . lines
-day04 = readFile fileName >>= print . play filterP2 . lines
+day04 = readFile "inputs/day04.txt" >>= print . liftA2 (,) (play filterP1) (play filterP2) . lines
 

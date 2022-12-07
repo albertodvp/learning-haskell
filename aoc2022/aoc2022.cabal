@@ -18,7 +18,11 @@ executable aoc2022
   hs-source-dirs:      src
   main-is:             Main.hs
   default-language:    Haskell2010
-  other-modules:
+  other-modules:         Day01
+                       , Day02
+                       , Day03
+                       , Day04
+                       , Day05
   build-depends:         base >= 4.7 && < 5
                        , text
                        , protolude

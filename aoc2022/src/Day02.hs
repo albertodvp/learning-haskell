@@ -5,14 +5,12 @@ module Day02(day02) where
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
+import Control.Applicative (liftA2)
 
 data Choice = Rock | Paper | Scissors deriving Eq
 data Result = Lose | Draw | Win
-
 type Round = (Choice, Choice)
-type Game = [Round]
 
--- Parsing
 parseResult :: Char -> Result
 parseResult 'X' = Lose
 parseResult 'Y' = Draw
@@ -21,29 +19,22 @@ parseResult _ = error "error"
 
 parseChoice :: Char -> Choice
 parseChoice c
-  | elem c ("AX" :: String) = Rock
-  | elem c ("BY" :: String) = Paper
-  | elem c ("CZ" :: String) = Scissors
+  | c `elem` ("AX" :: String) = Rock
+  | c `elem` ("BY" :: String) = Paper
+  | c `elem` ("CZ" :: String) = Scissors
   | otherwise = error "error"
 
-
 parseRoundP1 :: Text -> Round
-parseRoundP1 t = (parseChoice c1, parseChoice c2)
-  where
-    [c1, ' ', c2] = T.unpack t
+parseRoundP1 t = case T.unpack t of
+                   [c1, ' ', c2] -> (parseChoice c1, parseChoice c2)
+                   _ -> error "Wrong input"
 
 parseRoundP2 :: Text -> Round
-parseRoundP2 t = (oChoice, choice)
-  where
-    [c1, ' ', c2] = T.unpack t
-    oChoice = parseChoice c1
-    result= parseResult c2
-    choice = choiceFromResult result oChoice
+parseRoundP2 t = case T.unpack t of
+                   [c1, ' ', c2] -> let cc1 = parseChoice c1
+                                    in (cc1, choiceFromResult (parseResult c2) cc1)
+                   _ -> error "Wrong input"
 
-mkGame :: Text -> Game
-mkGame = map parseRoundP2 . T.lines
-
--- Logic
 choiceFromResult :: Result -> Choice -> Choice
 choiceFromResult Draw = id
 choiceFromResult Lose = choiceToWin . choiceToWin
@@ -67,19 +58,11 @@ roundScore x y
   | x == y = 3
   | otherwise = 0
 
-
 playRound :: Round -> Int
 playRound (opponent, toPlay) = choiceValue toPlay + roundScore toPlay opponent
 
-playGame :: Game -> Int
-playGame = sum . map playRound
-
-play :: Text -> Int
-play = playGame . mkGame
-
--- day02
-fileName :: [Char]
-fileName = "inputs/day02.txt"
+play :: (Text -> Round) -> Text -> Int
+play roundParser = (sum . map playRound) . map roundParser . T.lines
 
 day02 :: IO ()
-day02 = TIO.readFile fileName >>= print . play
+day02 = TIO.readFile "inputs/day02.txt" >>= print . liftA2 (,) (play parseRoundP1) (play parseRoundP2)
