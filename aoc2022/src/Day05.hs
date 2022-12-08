@@ -9,6 +9,7 @@ import Protolude hiding (head, many, some)
 import Text.Megaparsec
 import Text.Megaparsec.Char (char, eol, string)
 import qualified Text.Megaparsec.Char.Lexer as L
+import Utils
 import Prelude (id)
 
 type Crate = Char
@@ -25,8 +26,6 @@ push (Stack xs) (Stack ys) = Stack $ xs ++ ys
 head :: Stack a -> Either Text a
 head (Stack []) = Left "Empty stack"
 head (Stack (x : _)) = Right x
-replaceAt :: Int -> a -> [a] -> [a]
-replaceAt n y xs = take n xs ++ [y] ++ drop (n + 1) xs
 mkCrateStacks :: [CrateLine] -> [Stack Crate]
 mkCrateStacks = map (Stack . catMaybes) . transpose
 
