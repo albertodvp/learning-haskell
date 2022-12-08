@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 
-module Day07(module Day07) where
+module Day07 (module Day07) where
 
 import Control.Applicative.Combinators (choice)
 import qualified Data.List as List
