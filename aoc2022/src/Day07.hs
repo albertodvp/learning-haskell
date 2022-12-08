@@ -1,16 +1,14 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 
-module Day07 where
+module Day07(module Day07) where
 
-import Control.Applicative (liftA2)
 import Control.Applicative.Combinators (choice)
-import Control.Monad (foldM)
 import qualified Data.List as List
 import qualified Data.Text as T
 import Protolude
 import Text.Megaparsec (Parsec, errorBundlePretty, parse, takeWhile1P)
-import Text.Megaparsec.Char (char, eol, string)
+import Text.Megaparsec.Char (eol, string)
 import qualified Text.Megaparsec.Char.Lexer as L
 import Utils
 import qualified Prelude
@@ -69,6 +67,7 @@ insertFile fileSize fileName (FSNode currDirName size (Just nodes)) = Right $ FS
 
 insertInto :: Path -> FSNode -> ListEntry -> Either Text FSNode
 insertInto (nextStep : _) (FSNode _ _ (Just [])) _ = Left $ T.append nextStep " does not exist"
+insertInto _ (FSNode currDirName _ Nothing) _ = Left $ T.append currDirName " is a file"
 insertInto [] node (Nothing, nodeName) = insertDir nodeName node
 insertInto [] node (Just size, nodeName) = insertFile size nodeName node
 insertInto (nextStep : rest) (FSNode currDirName currSize (Just children)) (mSize, nodeName) = case List.findIndex ((== nextStep) . name) children of
@@ -82,7 +81,7 @@ runCommand :: Command -> FSState -> FSState
 runCommand ChangeRoot FSState{root = root} = FSState root []
 runCommand ChangeBack FSState{root = root, path = path} = FSState root $ List.drop 1 path
 runCommand (ChangeDir nodeName) FSState{root = root, path = path} = FSState root $ nodeName : path
-runCommand (List entries) s@FSState{root = root, path = path} = case foldM (insertInto (reverse path)) root entries of
+runCommand (List entries) FSState{root = root, path = path} = case foldM (insertInto (reverse path)) root entries of
     Right newRoot -> FSState newRoot path
     Left err -> Prelude.error $ T.unpack err -- NOTE: assume the output is semantically correct
 
@@ -100,6 +99,8 @@ totalSpace :: Int
 totalSpace = 70000000
 neededSpace :: Int
 neededSpace = 30000000
+
+p2 :: FSNode -> Int
 p2 root@(FSNode _ usedSpace _) = fst $ List.head $ filter ((>= spaceToFree) . fst) $ List.sortOn fst $ dirs root
   where
     freeSpace = totalSpace - usedSpace
@@ -109,4 +110,4 @@ day07 :: IO ()
 day07 =
     readFile "inputs/day07.txt" >>= \t -> case parse fsStateP "" t of
         Left err -> print $ errorBundlePretty err -- NOTE: assume the output is syntatically correct
-        Right FSState{root = root, path = path} -> print (p1 root, p2 root)
+        Right FSState{root = root, path = _path} -> print (p1 root, p2 root)
