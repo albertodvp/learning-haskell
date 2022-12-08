@@ -24,6 +24,7 @@ library
                        , Day05
                        , Day06
                        , Day07
+                       , Day08                       
   build-depends:       base >= 4.7 && < 5
                        , containers
                        , fourmolu
@@ -33,6 +34,7 @@ library
                        , protolude
                        , text
                        , parser-combinators
+                       , matrix
   default-language:    Haskell2010
 
 executable aoc2022-exe
@@ -59,5 +61,8 @@ test-suite aoc2022-test
                , aoc2022
                , base >= 4.7 && < 5
                , megaparsec
+               , matrix               
   default-language: Haskell2010
-  other-modules: Day07Test, UtilsTest
+  other-modules:   UtilsTest
+                 , Day07Test
+                 , Day08Test                 
