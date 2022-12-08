@@ -46,7 +46,6 @@ p2 trees = maximum . map (scenicScore trees)
 play :: Solver -> Trees -> Int
 play solver trees = solver trees [(i, j) | i <- [1 .. M.nrows trees], j <- [1 .. M.ncols trees]]
 
--- type Solver = Trees -> [Index] -> Int
 day08 :: IO ()
 day08 =
     readFile "inputs/day08.txt" >>= \t -> case parse parseGame "" t of
