@@ -9,15 +9,22 @@ import Control.Monad (foldM)
 import qualified Data.List as List
 import qualified Data.Text as T
 import Protolude
-import Text.Megaparsec (Parsec, parse, takeWhile1P)
+import Text.Megaparsec (Parsec, errorBundlePretty, parse, takeWhile1P)
 import Text.Megaparsec.Char (char, eol, string)
 import qualified Text.Megaparsec.Char.Lexer as L
 import Utils
+import qualified Prelude
 
 type Size = Int
 type NodeName = Text
-data FSNode = FSNode {name :: NodeName, size :: Size, children :: Maybe [FSNode]} deriving (Show, Eq)
+data FSNode = FSNode {name :: NodeName, size :: Size, children :: Maybe [FSNode]} deriving (Eq)
+
+instance Prelude.Show FSNode where
+    show (FSNode name size (Just children)) = concat [T.unpack name, " ", Prelude.show size, " children#: ", Prelude.show (length children)] ++ concatMap ((("\n" ++ T.unpack name ++ "/") ++) . Prelude.show) children
+    show (FSNode name size _) = concat [T.unpack name, " ", Prelude.show size]
+
 type Path = [NodeName]
+
 emptyRoot :: FSNode
 emptyRoot = FSNode "" 0 $ Just []
 mkDirNode :: NodeName -> FSNode
@@ -73,11 +80,33 @@ insertInto (nextStep : rest) (FSNode currDirName currSize (Just children)) (mSiz
 
 runCommand :: Command -> FSState -> FSState
 runCommand ChangeRoot FSState{root = root} = FSState root []
-runCommand ChangeBack FSState{root = root, path = path} = FSState root $ List.tail path
+runCommand ChangeBack FSState{root = root, path = path} = FSState root $ List.drop 1 path
 runCommand (ChangeDir nodeName) FSState{root = root, path = path} = FSState root $ nodeName : path
-runCommand (List entries) s@FSState{root = root, path = path} = case foldM (insertInto path) root entries of
+runCommand (List entries) s@FSState{root = root, path = path} = case foldM (insertInto (reverse path)) root entries of
     Right newRoot -> FSState newRoot path
-    Left _ -> s -- NOTE: we assume the output is correct
+    Left err -> Prelude.error $ T.unpack err -- NOTE: assume the output is semantically correct
+
+dirs :: FSNode -> [(Size, NodeName)]
+dirs (FSNode _ _ Nothing) = []
+dirs (FSNode dirName size (Just xs)) = (size, dirName) : concatMap dirs xs
+
+fsStateP :: Parser FSState
+fsStateP = foldl (flip runCommand) initialState <$> commandsP
+
+p1 :: FSNode -> Int
+p1 = sum . filter (<= 100000) . List.sort . map fst . dirs
+
+totalSpace :: Int
+totalSpace = 70000000
+neededSpace :: Int
+neededSpace = 30000000
+p2 root@(FSNode _ usedSpace _) = fst $ List.head $ filter ((>= spaceToFree) . fst) $ List.sortOn fst $ dirs root
+  where
+    freeSpace = totalSpace - usedSpace
+    spaceToFree = neededSpace - freeSpace -- NOTE: assume this is positive
 
 day07 :: IO ()
-day07 = readFile "inputs/day07.txt" >>= print . parse commandsP ""
+day07 =
+    readFile "inputs/day07.txt" >>= \t -> case parse fsStateP "" t of
+        Left err -> print $ errorBundlePretty err -- NOTE: assume the output is syntatically correct
+        Right FSState{root = root, path = path} -> print (p1 root, p2 root)
