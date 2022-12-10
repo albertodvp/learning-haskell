@@ -19,6 +19,7 @@ parseCommand c = case c of
 
 parseCommands :: String -> [Command]
 parseCommands (c : ' ' : n) = parseCommand <$> replicate (read n) c
+parseCommands _ = error "invalid input"
 
 nextHeadMove :: Command -> Index -> Index
 nextHeadMove c = case c of
@@ -28,17 +29,14 @@ nextHeadMove c = case c of
     L -> first pred
 
 moveTail :: Index -> Index -> Index
-moveTail (headX, headY) tail@(tailX, tailY)
+moveTail (headX, headY) t@(tailX, tailY)
     | dx == 2 && dy == 2 = ((headX + tailX) `div` 2, (headY + tailY) `div` 2)
     | dx == 2 = ((headX + tailX) `div` 2, headY)
     | dy == 2 = (headX, (headY + tailY) `div` 2)
-    | otherwise = tail
+    | otherwise = t
   where
     dx = abs $ headX - tailX
     dy = abs $ headY - tailY
-
-moveTail' :: Index -> Index -> Index
-moveTail' a b = b
 
 move :: GameState -> Command -> GameState
 move (GameState _ [] _) _ = error "invalid game"
@@ -47,6 +45,7 @@ move (GameState h t vis) c =
         newTail = tail $ scanl' moveTail newHead t
         newVis = S.insert (last newTail) vis
      in GameState newHead newTail newVis
+
 mkInitGame :: Int -> GameState
 mkInitGame ropeSize = GameState (0, 0) (replicate (ropeSize - 1) (0, 0)) $ S.singleton (0, 0)
 
