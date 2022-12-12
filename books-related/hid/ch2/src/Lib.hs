@@ -1,11 +1,9 @@
-module Lib
-    ( someFunc
-    ) where
-
-someFunc :: IO ()
-someFunc = putStrLn "someFunc"
+{-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 
+module Lib (module Lib) where
+import Fmt
 -- Enum: enumerate elements
 -- Bounded: specify maximum and minimum bounds
 -- Eq: allow to test for equality
@@ -52,9 +50,6 @@ instance Semigroup Turn where
 instance Monoid Turn where
   mempty = TNone
 
--- When you use a new type, check for typeclass instances of that type
-
--- Cayley tables: describe  the structure of a finite group by arranging all the possible products of all the group's element
 class (Eq a, Enum a, Bounded a) => CyclicEnum a where
   cpred :: a -> a
   cpred d
@@ -65,3 +60,45 @@ class (Eq a, Enum a, Bounded a) => CyclicEnum a where
   csucc d
     | d == maxBound = minBound
     | otherwise = succ d
+
+-- IO
+
+deriving instance Read Direction
+deriving instance Read Turn
+
+rotateFromFile :: Direction -> FilePath -> IO ()
+rotateFromFile dir fp = do
+  f <- readFile fp
+  let turns = map read $ lines f
+      finalDir = rotateMany' dir turns
+      dirs = rotateManySteps dir turns
+  fmtLn $ "Final direction: " +|| finalDir ||+ ""
+  fmt $ nameF "Intermediate directions" (unwordsF dirs)
+
+orientFromFile :: FilePath -> IO ()
+orientFromFile fp = do
+  f <- readFile fp
+  let dirs = map read (lines f)
+      turns = orientMany dirs
+  fmt $ nameF "All turns" (unwordsF turns)
+    
+   
+instance Buildable Direction where
+  build North = "N"
+  build East = "E"
+  build South = "S"
+  build West = "W"
+ 
+instance Buildable Turn where
+  build TNone = "--"
+  build TLeft = "<-"
+  build TRight = "->"
+  build TAround = "||"  
+
+
+
+-- When you use a new type, check for typeclass instances of that type
+
+-- Cayley tables: describe  the structure of a finite group by arranging all the possible products of all the group's element
+
+-- deriving instance StandaloneDeriving
