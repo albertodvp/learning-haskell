@@ -13,14 +13,14 @@ import qualified Data.Map as M
 type Parser = Parsec Void Text
 type Id = Int
 type WorryLevel = Int
-type TestTrow = WorryLevel -> Bool
+type TestTrow = Int
 type Op = WorryLevel -> WorryLevel
 
 data Monkey = Monkey {
   id::Id,
   worryLevels::[WorryLevel],
   inspectionOperation::Op,
-  throwPredicate::TestTrow,
+  testThrow::TestTrow,
   idIfTrueThrow :: Id,
   idIfFalseThrow :: Id
   }
@@ -44,17 +44,12 @@ opP = do
   opC <- oneOf ['+', '*'] <* space1
   mkOp opC <$> L.decimal <|> mkOpFromOld opC <$ string "old"
 
-ttP :: Parser TestTrow
-ttP = do
-  y <- L.decimal
-  return $ \x -> mod x y == 0
-
 monkeyP :: Parser Monkey
 monkeyP = do
   id <- lexeme $ string "Monkey " *> L.decimal <* string ":"
   wl <- lexeme $ string "Starting items: " *> sepBy1 L.decimal (string ", ")
   op <- lexeme $ string "Operation: new = old " *> opP
-  tt <- lexeme $ string "Test: divisible by " *> ttP
+  tt <- lexeme $ string "Test: divisible by " *> L.decimal
   trueCaseId <- lexeme $ string "If true: throw to monkey " *> L.decimal
   falseCaseId <- lexeme $ string "If false: throw to monkey " *> L.decimal
   pure $ Monkey id wl op tt trueCaseId falseCaseId
@@ -74,32 +69,30 @@ receive wl m@(Monkey id wls op tt tid fid) = Monkey id (wls ++ [wl]) op tt tid f
 playThrow :: TestTrow -> Id -> Id -> Game -> WorryLevel -> Game
 playThrow tt tid fid (Game mm as) wl = Game (M.insert targetId receiver mm) as
   where
-    targetId = if tt wl then tid else fid
+    targetId = if wl `mod` tt == 0 then tid else fid
     receiver = receive wl $ (M.!) mm targetId
 
-playMonkey :: Game -> Int -> Game
-playMonkey (Game mm as) monkeyId = foldl' (playThrow tt tid fid) updatedGame (updatedWorryLevel)
+playMonkey :: Op -> Game -> Int -> Game
+playMonkey worryLowerer (Game mm as) monkeyId = foldl' (playThrow tt tid fid) updatedGame (updatedWorryLevel)
   where
     (Monkey mId wls op tt tid fid) = (M.!) mm monkeyId
     updatedMM = M.insert mId (Monkey mId [] op tt tid fid) mm
     updatedAS = M.insertWith (+) mId (length wls) as
     updatedGame = Game updatedMM updatedAS
-    updatedWorryLevel = map ((`div` 3) . op) wls
+    updatedWorryLevel = map (worryLowerer . op) wls
 
-playRound :: Game -> Int -> Game
-playRound g@(Game mm _) _ = foldl' playMonkey g [0..M.size mm-1]
+playRound :: Op -> Game -> Int -> Game
+playRound worryLowerer g@(Game mm _) _ = foldl' (playMonkey worryLowerer) g [0..M.size mm-1]
 
-play :: [Monkey] -> Int
-play ms = let (Game _ as) = foldl' playRound (initialState ms) [0..19]
+play :: Op -> Int -> [Monkey] -> Int
+play worryLowerer nRound ms = let (Game _ as) = foldl' (playRound worryLowerer) (initialState ms) [0..nRound - 1]
           in product $ take 2 $ sortOn Down (snd <$> M.toList as)
-
-play' :: [Monkey] -> Game
-play' ms = foldl' playRound (initialState ms) [0..19]
 
 day11 :: IO ()
 day11 = do
     t <- readFile "inputs/day11.txt"
     case parse monkeysP "" t of
       Left err -> putStrLn $ errorBundlePretty err
-      Right ms -> print $ play ms
---      Right ms -> print $ play' ms
+      Right ms -> let m =  foldl' lcm 1 $ testThrow <$> ms
+                  in print $ (play (`div` 3) 20 ms, play (`mod` m) 10000 ms)
+                      
