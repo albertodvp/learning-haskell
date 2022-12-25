@@ -1,0 +1,10 @@
+North
+West
+West
+West
+North
+South
+West
+North
+South
+East

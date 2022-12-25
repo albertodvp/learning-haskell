@@ -8,11 +8,10 @@ import qualified Prelude
 
 import Stems
 
--- | read input from a file e.g "./data/hamlet.txt/"
 population :: FilePath -> IO (Population Char)
 population p = readFile p <&> Population . getStems
 
--- TODO why IO b
+-- TODO why IO b?
 main :: IO b
 main = do
   args <- getArgs

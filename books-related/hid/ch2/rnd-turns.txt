@@ -1,0 +1,10 @@
+TLeft
+TAround
+TRight
+TLeft
+TLeft
+TRight
+TRight
+TNone
+TLeft
+TLeft

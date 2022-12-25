@@ -33,6 +33,7 @@ getStems = map (Stem . Prelude.head) . group . sort . concatMap Prelude.words . 
   where
     cleanAndTrim = cleanLine . dropAround (not . isLetter)
 
+-- complementary
 comp :: Eq a => Stem a -> Stem a -> Maybe (Stem a)
 comp (Stem ys) (Stem xs)
   | ys `isPrefixOf` xs = Just $ Stem $ drop (length ys) xs
@@ -91,12 +92,17 @@ instance Foldable PopulationTrie where
     where
       g (a, p) m = f a <> foldMap f p <> m
 
+-- TODO: instance Foldable PopulationTrie where
+-- TODO: instance Semigroup PopulationTrie where  
+-- TODO: instance Monoid PopulationTrie where
+-- TODO: rewrite insert
+
 empty :: PopulationTrie a
 empty =  PopulationTrie M.empty
 
 singleton :: Ord a => a -> PopulationTrie a
 singleton a = PopulationTrie $ M.fromList [(a, Stems.empty)]
-  
+
 -- | primitive operation to update a population trie with a new stem
 insert :: Ord a => Stem a -> PopulationTrie a -> PopulationTrie a
 insert (Stem []) pt = pt
@@ -105,11 +111,11 @@ insert (Stem (x:xs)) (PopulationTrie prevM) = PopulationTrie newM
     prevSubM = M.findWithDefault empty x prevM
     newSubM = insert (Stem xs) prevSubM
     newM = M.insert x newSubM prevM
-    
+
 mkTrie :: Ord a => Population a -> PopulationTrie a
 mkTrie = foldr insert empty . unPopulation
 
--- TODO understand why this duplication exists
+-- TODO understand why this duplication exists?
 unTrie :: Ord a => Stem a -> PopulationTrie a -> [Stem a]
 unTrie (Stem base) p = map (Stem . (base ++). unStem . Prelude.head) $ group $ sortOn unStem $ go (Stem []) p []
   where
@@ -129,7 +135,8 @@ navigate (Stem []) p = p
 navigate (Stem (x:xs)) (PopulationTrie m) = case M.lookup x m of
   Just trie -> navigate (Stem xs) trie
   Nothing -> empty
-  
+
+
 -- | select the trie of the given stem and traverse all children to
 -- rebuild the 'n' best super-stems
 queryTrie :: Ord a => 
@@ -141,6 +148,7 @@ queryTrie :: Ord a =>
   Stem a ->
   -- | super stems
   [Stem a]
+-- TODO user value  
 queryTrie num pop base = take num $ unTrie base $ navigate base pop
 
 -- TODO: prove that is possible/impossible to prune the search based on values only

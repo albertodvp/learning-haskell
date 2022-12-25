@@ -1,6 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Lib (extractVocab, allWordsReport, wordsCountReport, frequentWordsReport) where
 import Data.Text (Text)
+
 import Fmt
 import qualified Data.Text as T
 
