@@ -12,5 +12,5 @@ readQuotes :: FilePath -> IO [QuoteData]
 readQuotes fp = do
   csvData <- BL.readFile fp
   case decodeByName csvData of
-    Left err -> putStrLn err >> pure []
+    Left _ -> pure []
     Right (_, qd) -> pure $ toList qd
