@@ -19,7 +19,7 @@ data QuoteData = QuoteData {
 
 
 instance FromField Day where
-  parseField = parseTimeM True defaultTimeLocale "%Y-%M-%d" . unpack
+  parseField = parseTimeM True defaultTimeLocale "%Y-%m-%d" . unpack
   
 
 
