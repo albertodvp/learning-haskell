@@ -6,7 +6,7 @@ module QuoteData where
 import Data.Time (Day, parseTimeM, defaultTimeLocale)
 import Data.ByteString.Char8 (unpack)
 import GHC.Generics (Generic)
-import Data.Csv (FromNamedRecord, FromField (..))
+import Data.Csv (decodeByName, FromNamedRecord, FromField (..))
 
 data QuoteData = QuoteData {
   day :: Day,
@@ -15,7 +15,7 @@ data QuoteData = QuoteData {
   close :: Double,
   high :: Double,
   low :: Double
-  } deriving (Generic, FromNamedRecord)
+  } deriving (Generic, FromNamedRecord, Show)
 
 
 instance FromField Day where
@@ -30,5 +30,5 @@ field2fun :: QField -> QuoteData -> Double
 field2fun Open = open
 field2fun Close = close
 field2fun High = high
-field2fun Low = Low
-field2fun Volume = fromIntgeral . volume
+field2fun Low = low
+field2fun Volume = fromIntegral . volume
