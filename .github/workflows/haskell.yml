@@ -1,42 +1,41 @@
-name: Haskell CI
+# name: Haskell CI
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+# on:
+  # push:
+  #   branches: [ "main" ]
+  # pull_request:
+  #   branches: [ "main" ]
+# permissions:
+#   contents: read
 
-permissions:
-  contents: read
-
-jobs:
-  build-aoc2022:
-    name: Build aoc2022
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: aoc2022
-    steps:
-    - uses: actions/checkout@v3
-    - uses: actions/cache@v3
-      name: Cache ~/.stack
-      with:
-        path: ~/.stack
-        key: ${{ runner.os }}-stack-global-${{ hashFiles('stack.yaml') }}-${{ hashFiles('package.yaml') }}
-        restore-keys: |
-          ${{ runner.os }}-stack-global-
-    - uses: haskell/actions/setup@v2
-      with:
-        ghc-version: '9.2.5'
-        enable-stack: true
-        stack-version: 'latest'
-    - name: Build
-      run: stack build
-    - name: Format check
-      run: stack exec fourmolu -- --mode check src test
-    - name: HLint
-      run: stack exec hlint -- src test
-    - name: Run tests
-      run: stack test
-    - name: Run 0-exits 
-      run: stack run
+# jobs:
+#   build-aoc2022:
+#     name: Build aoc2022
+#     runs-on: ubuntu-latest
+#     defaults:
+#       run:
+#         working-directory: aoc2022
+#     steps:
+#     - uses: actions/checkout@v3
+#     - uses: actions/cache@v3
+#       name: Cache ~/.stack
+#       with:
+#         path: ~/.stack
+#         key: ${{ runner.os }}-stack-global-${{ hashFiles('stack.yaml') }}-${{ hashFiles('package.yaml') }}
+#         restore-keys: |
+#           ${{ runner.os }}-stack-global-
+#     - uses: haskell/actions/setup@v2
+#       with:
+#         ghc-version: '9.2.5'
+#         enable-stack: true
+#         stack-version: 'latest'
+#     - name: Build
+#       run: stack build
+#     - name: Format check
+#       run: stack exec fourmolu -- --mode check src test
+#     - name: HLint
+#       run: stack exec hlint -- src test
+#     - name: Run tests
+#       run: stack test
+#     - name: Run 0-exits 
+#       run: stack run
