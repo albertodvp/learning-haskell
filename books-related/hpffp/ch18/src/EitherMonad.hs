@@ -1,6 +1,6 @@
 module EitherMonad where
 
-import Control.Monad
+import           Control.Monad
 
 type Founded = Int
 
@@ -43,8 +43,8 @@ mkSoftware years coders = do
 
   if p > div f 10
     then Left $ TooManyCodersForYears f p
-    else Right $ Shop f p 
-  
+    else Right $ Shop f p
+
 data Sum a b =
     First a
   | Second b
@@ -64,6 +64,6 @@ instance Applicative (Sum a) where
 instance Monad (Sum a) where
   return = pure
   -- (>>=) :: Monad m => m a -> (a -> m b) -> m b
-  (>>=) (First a) _ = First a
+  (>>=) (First a) _   = First a
   (>>=) (Second a) sf = sf a
 

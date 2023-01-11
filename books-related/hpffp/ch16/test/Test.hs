@@ -1,8 +1,8 @@
 module Main where
 
-import Test.QuickCheck
+import           Test.QuickCheck
 
-import Lib
+import           Lib
 
 main :: IO ()
 main = do

@@ -1,10 +1,10 @@
 module Main(main) where
 
 
-import System.Environment (getArgs)
+import           System.Environment (getArgs)
 
 
-import Lib
+import           Lib
 
 main :: IO ()
 main = do
@@ -14,4 +14,4 @@ main = do
     ["-o", fname] -> orientFromFile fname
     _ -> putStrLn $ "Usage: locator -o filename\n" ++
                     "       locator -r filename direction"
-    
+

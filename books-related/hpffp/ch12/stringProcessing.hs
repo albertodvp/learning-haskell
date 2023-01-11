@@ -11,7 +11,7 @@ replaceThe = unwords . map conv . map notThe . words
     conv :: Maybe String -> String
     conv x = case x of
       Nothing -> "a"
-      Just x -> x
+      Just x  -> x
 
 
 

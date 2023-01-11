@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleInstances #-}
 module Lib where
 
-import Test.QuickCheck
+import           Test.QuickCheck
 
 -- Identity
 newtype Identity a = Identity a deriving (Eq, Show)
@@ -42,7 +42,7 @@ instance (Arbitrary a, Arbitrary b) => Arbitrary (Two a b) where
     b <- arbitrary
     return $ Two a b
 
-  
+
 -- Four
 data Four a b c d = Four a b c d deriving (Eq, Show)
 
@@ -54,7 +54,7 @@ instance (Arbitrary a, Arbitrary b, Arbitrary c, Arbitrary d) => Arbitrary (Four
     a <- arbitrary
     b <- arbitrary
     c <- arbitrary
-    d <- arbitrary  
+    d <- arbitrary
     return $ Four a b c d
 
 -- Quant
@@ -64,8 +64,8 @@ data Quant a b =
   | Bloor b deriving (Eq, Show)
 
 instance Functor (Quant a) where
-  fmap _ Finance = Finance
-  fmap _ (Desk a) = Desk a
+  fmap _ Finance   = Finance
+  fmap _ (Desk a)  = Desk a
   fmap f (Bloor b) = Bloor (f b)
 
 instance (Arbitrary a, Arbitrary b) => Arbitrary (Quant a b) where
@@ -79,7 +79,7 @@ instance (Arbitrary a, Arbitrary b) => Arbitrary (Quant a b) where
 newtype K a b = K a deriving (Eq, Show)
 
 instance Functor (K a) where
-  fmap _ (K a) = K a 
+  fmap _ (K a) = K a
 
 newtype Flip f a b =
   Flip (f b a)
@@ -96,7 +96,7 @@ data EvilGoateeConst a b =
 
 instance Functor (EvilGoateeConst a) where
   fmap f (GoatyConst b) = GoatyConst (f b)
-  
+
 
 
 
@@ -131,7 +131,7 @@ data Notorious g o a t =
 instance Functor g => Functor (Notorious g o a) where
   fmap f (Notorious go ga gt) = Notorious go ga (fmap f gt)
 
-  
+
 data List a =
   Nil | Cons a (List a) deriving (Eq, Show)
 
@@ -160,6 +160,6 @@ data TalkToMe a =
   | Read (String -> a)
 
 instance Functor TalkToMe where
-  fmap _ Halt = Halt
+  fmap _ Halt        = Halt
   fmap f (Print s x) = Print s (f x)
   fmap f (Read s2a)  = Read (f . s2a)

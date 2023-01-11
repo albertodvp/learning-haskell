@@ -17,7 +17,7 @@
 #
 # resolver: ./custom-snapshot.yaml
 # resolver: https://example.com/snapshots/2018-01-01.yaml
-compiler: ghc-9.2.4
+compiler: ghc-9.2.5
 resolver:
   url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/20/2.yaml  
 

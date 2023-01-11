@@ -1,6 +1,6 @@
 module DatabaseProcessing where
 
-import Data.Time
+import           Data.Time
 
 data DatabaseItem = DbString String
                     | DbNumber Integer
@@ -27,12 +27,12 @@ filterDbDate (_:xs) = filterDbDate xs
 filterDbDate = foldr f []
   where
     f (DbDate x) xs = x : xs
-    f _ xs = xs
+    f _ xs          = xs
 
 filterDbNumber :: [DatabaseItem] -> [Integer]
-filterDbNumber [] = []
+filterDbNumber []              = []
 filterDbNumber (DbNumber n:xs) = n : filterDbNumber xs
-filterDbNumber (_:xs) = filterDbNumber xs
+filterDbNumber (_:xs)          = filterDbNumber xs
 
 mostRecent :: [DatabaseItem] -> UTCTime
 mostRecent = maximum . filterDbDate

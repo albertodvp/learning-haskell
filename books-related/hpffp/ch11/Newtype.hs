@@ -1,5 +1,5 @@
+{-# LANGUAGE FlexibleInstances          #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
-{-# LANGUAGE FlexibleInstances #-}
 class TooMany a where
   tooMany :: a -> Bool
 
@@ -24,7 +24,7 @@ newtype IntString =
 
 instance TooMany IntString where
   tooMany (IntString is)= tooMany (fst is)
-                                  
+
 
 instance (Num a, TooMany a) => TooMany (a, a) where
   tooMany (x, y) = tooMany (x+y)

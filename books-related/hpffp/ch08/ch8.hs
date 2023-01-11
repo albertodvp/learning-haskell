@@ -6,7 +6,7 @@ module Ch8 where
 
 f :: Bool -> Int
 f True = 0
-f _ = error "Error"
+f _    = error "Error"
 
 
 f' :: Bool -> Int
@@ -18,7 +18,7 @@ f' True = 0
 
 f'' :: Bool -> Maybe Int
 f'' False = Just 0
-f'' _ = Nothing
+f'' _     = Nothing
 
 
 -- TODO this is broken
@@ -40,7 +40,7 @@ type Numberator = Integer
 type Denominator = Integer
 type Quotient = Integer
 
-dividedBy :: Numberator -> Denominator -> Quotient 
+dividedBy :: Numberator -> Denominator -> Quotient
 dividedBy n d
   | n < d = 0
   | otherwise = dividedBy (n-d) d + 1
@@ -72,7 +72,7 @@ recursiveProd x y
 data DivResult = Result (Integer, Integer) | DividedByZero deriving Show
 dividedBy'' :: Integer -> Integer -> DivResult
 dividedBy'' num den = go num den 0
-  where go n d count 
+  where go n d count
          | d == 0    = DividedByZero
          | n < d     = Result (count, n)
          | otherwise = go (n-d) d (count+1)
@@ -81,7 +81,7 @@ dividedBy'' num den = go num den 0
 
 
 mc91 :: (Num a, Ord a) => a -> a
-mc91 x 
+mc91 x
   | x >  100  = x - 10
   | x <= 100 = mc91(mc91(x+11))
 
@@ -108,7 +108,7 @@ digitToWord _ = Nothing
 -- TODO
 digits :: Int -> [Int]
 digits x
-  | x < 10    = [x] 
+  | x < 10    = [x]
   | otherwise = digits(d) ++ [m] where (d, m) = divMod x 10
 
 

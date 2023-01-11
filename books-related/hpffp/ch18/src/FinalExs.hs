@@ -25,7 +25,7 @@ instance Monad Nope where
 
 data BahEither b a = PLeft a | PRight b deriving (Eq, Show)
 
-instance Functor (BahEither b) where-;
+instance Functor (BahEither b) where
   fmap _ (PRight b) = PRight b
   fmap f (PLeft a)  = PLeft $ f a
 

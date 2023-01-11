@@ -44,7 +44,7 @@ data CowInfo =
   CowInfo Name Age
   deriving (Eq, Show)
 
-data PigInfo = 
+data PigInfo =
   PigInfo Name Age LovesMud
   deriving (Eq, Show)
 

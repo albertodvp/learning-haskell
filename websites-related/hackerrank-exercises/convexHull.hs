@@ -1,6 +1,6 @@
 module ConvexHull where
 
-import Data.List
+import           Data.List
 
 data Point = Point Int Int deriving (Show, Eq, Ord)
 
@@ -41,7 +41,7 @@ dropWhileRightTurn p (p1:p2:pts) =
     dropWhileRightTurn p (p2:pts)
   else
     (p:p1:p2:pts)
-  
+
 
 
 convexHull :: [Point] -> [Point]

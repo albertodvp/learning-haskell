@@ -1,14 +1,14 @@
+{-# LANGUAGE OverloadedStrings  #-}
 {-# LANGUAGE StandaloneDeriving #-}
-{-# LANGUAGE OverloadedStrings #-}
 
 
 module Lib (module Lib) where
 
-import Fmt
-import System.Random.Stateful
-import Control.Monad (replicateM, unless)
-import Data.List
-import System.Exit (exitFailure)
+import           Control.Monad          (replicateM, unless)
+import           Data.List
+import           Fmt
+import           System.Exit            (exitFailure)
+import           System.Random.Stateful
 
 
 -- Enum: enumerate elements
@@ -22,9 +22,9 @@ instance Ord Turn
 
 instance CyclicEnum Direction
 rotate :: Turn -> Direction -> Direction
-rotate TNone = id
-rotate TLeft = cpred
-rotate TRight = csucc
+rotate TNone   = id
+rotate TLeft   = cpred
+rotate TRight  = csucc
 rotate TAround = csucc . csucc
 
 orient :: Direction -> Direction -> Turn
@@ -44,18 +44,18 @@ rotateManySteps = scanl $ flip rotate
 
 orientMany :: [Direction] -> [Turn]
 orientMany ds@(_:_:_) = zipWith orient ds (tail ds)
-orientMany _ = []
+orientMany _          = []
 
 instance Semigroup Turn where
-  TNone <> t = t
-  TLeft <> TLeft = TAround
-  TLeft <> TRight = TNone
-  TLeft <> TAround = TRight
-  TRight <> TRight = TAround
-  TRight <> TAround = TLeft
+  TNone <> t         = t
+  TLeft <> TLeft     = TAround
+  TLeft <> TRight    = TNone
+  TLeft <> TAround   = TRight
+  TRight <> TRight   = TAround
+  TRight <> TAround  = TLeft
   TAround <> TAround = TNone
-  t1 <> t2 = t2 <> t1
-  
+  t1 <> t2           = t2 <> t1
+
 instance Monoid Turn where
   mempty = TNone
 
@@ -90,19 +90,19 @@ orientFromFile fp = do
   let dirs = map read (lines f)
       turns = orientMany dirs
   fmt $ nameF "All turns" (unwordsF turns)
-    
-   
+
+
 instance Buildable Direction where
   build North = "N"
-  build East = "E"
+  build East  = "E"
   build South = "S"
-  build West = "W"
- 
+  build West  = "W"
+
 instance Buildable Turn where
-  build TNone = "--"
-  build TLeft = "<-"
-  build TRight = "->"
-  build TAround = "||"  
+  build TNone   = "--"
+  build TLeft   = "<-"
+  build TRight  = "->"
+  build TAround = "||"
 
 
 instance UniformRange Direction where
@@ -112,7 +112,7 @@ instance UniformRange Direction where
 
 instance Uniform Direction where
   uniformM = uniformRM (minBound, maxBound)
-  
+
 -- Equals? Is there a way to write this once?
 -- instance CyclicEnum a where
 instance UniformRange Turn where
@@ -131,7 +131,7 @@ uniformsIO n = replicateM n uniformIO
 
 randomTurns :: Int -> IO [Turn]
 randomTurns = uniformsIO
- 
+
 randomDirections :: Int -> IO [Direction]
 randomDirections = uniformsIO
 
@@ -150,7 +150,7 @@ test_rotationsMonoidAgree :: [Turn] -> Bool
 test_rotationsMonoidAgree ts = and [rotateMany d ts == rotateMany' d ts | d <- every]
 
 test_orientRotateAgree :: [Direction] -> Bool
-test_orientRotateAgree [] = True
+test_orientRotateAgree []       = True
 test_orientRotateAgree ds@(d:_) = ds == rotateManySteps d (orientMany ds)
 
 main :: IO ()
@@ -158,7 +158,7 @@ main = do
   ds <- randomDirections 1000
   ts <- randomTurns 1000
   unless (and [test_allTurnsInUse, test_orientRotateAgree ds, test_rotationsMonoidAgree ts]) exitFailure
-                  
+
 
 
 -- When you use a new type, check for typeclass instances of that type

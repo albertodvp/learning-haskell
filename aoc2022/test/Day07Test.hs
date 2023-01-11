@@ -2,9 +2,9 @@
 
 module Day07Test (day07Tests) where
 
-import Day07
-import Test.HUnit
-import Text.Megaparsec (parse)
+import           Day07
+import           Test.HUnit
+import           Text.Megaparsec (parse)
 
 day07Tests =
     [ "FSNode" ~: "emptyRoot size" ~: name emptyRoot ~?= ""

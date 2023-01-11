@@ -14,7 +14,7 @@ insert' x (Node left y right)
 
 
 mapTree :: (a -> b) -> BinaryTree a -> BinaryTree b
-mapTree _ Leaf = Leaf
+mapTree _ Leaf                = Leaf
 mapTree f (Node left x right) = Node (mapTree f left) (f x) (mapTree f right)
 
 testTree' :: BinaryTree Integer
@@ -36,16 +36,16 @@ mapOkay =
 
 
 preorder :: BinaryTree a -> [a]
-preorder Leaf = []
+preorder Leaf                = []
 preorder (Node left x right) = x : preorder left ++ preorder right
 
 inorder :: BinaryTree a -> [a]
-inorder Leaf = []
+inorder Leaf                = []
 inorder (Node left x right) = inorder left ++ [x] ++ inorder right
 
 
 postorder :: BinaryTree a -> [a]
-postorder Leaf = []
+postorder Leaf                = []
 postorder (Node left x right) = postorder left ++ postorder right ++ [x]
 
 
@@ -84,19 +84,19 @@ main = do
 
 -- foldr
 foldr' :: (a -> b -> b) -> b -> [a] -> b
-foldr' _ b [] = b
+foldr' _ b []     = b
 foldr' f b (x:xs) = f x $ foldr' f b xs
 
 foldrTree :: (a -> b -> b) -> b -> BinaryTree a -> b
-foldrTree _ b Leaf = b
+foldrTree _ b Leaf         = b
 foldrTree f b (Node l a r) = a `f` foldrTree f (foldrTree f b l) r
 
 
 -- foldr
 foldl' :: (b -> a -> b) -> b -> [a] -> b
-foldl' _ b [] = b
+foldl' _ b []     = b
 foldl' f b (x:xs) = foldl' f (f b x) xs
 
 foldlTree :: (b -> a -> b) -> b -> BinaryTree a -> b
-foldlTree _ b Leaf = b
+foldlTree _ b Leaf         = b
 foldlTree f b (Node l a r) = foldlTree f (foldlTree f b l `f` a) r

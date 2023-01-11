@@ -2,10 +2,10 @@
 
 module Day08 (module Day08) where
 
-import qualified Data.Matrix as M
-import Protolude
-import Text.Megaparsec (Parsec, errorBundlePretty, parse)
-import Text.Megaparsec.Char (eol, numberChar)
+import qualified Data.Matrix          as M
+import           Protolude
+import           Text.Megaparsec      (Parsec, errorBundlePretty, parse)
+import           Text.Megaparsec.Char (eol, numberChar)
 
 type Parser = Parsec Void Text
 type Trees = M.Matrix Char
@@ -49,5 +49,5 @@ play solver trees = solver trees [(i, j) | i <- [1 .. M.nrows trees], j <- [1 ..
 day08 :: IO ()
 day08 =
     readFile "inputs/day08.txt" >>= \t -> case parse parseGame "" t of
-        Left err -> print $ errorBundlePretty err -- NOTE: assume the output is syntatically correct
+        Left err    -> print $ errorBundlePretty err -- NOTE: assume the output is syntatically correct
         Right trees -> print (play p1 trees, play p2 trees)

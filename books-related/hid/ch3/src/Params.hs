@@ -1,15 +1,15 @@
 module Params where
-import Options.Applicative
-import Data.Text (Text, strip)
+import           Data.Text           (Text, strip)
+import           Options.Applicative
 
 data Params = Params {
-    fname :: FilePath
-  , company :: Maybe Text
-  , chart :: Bool
+    fname    :: FilePath
+  , company  :: Maybe Text
+  , chart    :: Bool
   , htmlFile :: Maybe FilePath
-  , silent :: Bool
+  , silent   :: Bool
   }
-  
+
 mkParams :: Parser Params
 mkParams = Params
            <$> strArgument (metavar "FILE" <> help "CSV file name")

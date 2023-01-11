@@ -1,7 +1,7 @@
 module Experiment where
 
-import Data.Char
-import Control.Monad.Reader
+import           Control.Monad.Reader
+import           Data.Char
 
 strIsEnoughtToLower :: Reader [Char] Bool
 strIsEnoughtToLower = Reader $ \s -> length s > 5

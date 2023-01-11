@@ -1,8 +1,8 @@
 module Day08Test where
 
 import qualified Data.Matrix as M
-import Day08
-import Test.HUnit
+import           Day08
+import           Test.HUnit
 
 day08Tests =
     [ "takeWhile1" ~: "all" ~: takeWhile1 (<= 10) [1 .. 5] ~?= [1, 2, 3, 4, 5]

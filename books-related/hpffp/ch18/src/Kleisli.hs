@@ -1,6 +1,6 @@
 module Kleisli where
 
-import Control.Monad ((>=>))
+import           Control.Monad ((>=>))
 
 sayHi :: String -> IO String
 sayHi greeting = do

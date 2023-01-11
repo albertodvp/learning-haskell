@@ -2,12 +2,12 @@
 
 module Day06 (day06) where
 
-import Protolude
+import           Protolude
 
-import qualified Data.List as L
-import Data.Maybe (fromJust)
-import qualified Data.Set as S
-import Data.Text (unpack)
+import qualified Data.List  as L
+import           Data.Maybe (fromJust)
+import qualified Data.Set   as S
+import           Data.Text  (unpack)
 
 firstNDiff :: Int -> [Char] -> Maybe Int
 firstNDiff dim = go 0

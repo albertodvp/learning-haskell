@@ -1,14 +1,15 @@
-{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Day11 (module Day11) where
 
-import Protolude
 import qualified Prelude
+import           Protolude
 
-import qualified Data.Map as M
-import Text.Megaparsec (Parsec, errorBundlePretty, oneOf, parse, sepBy1)
-import Text.Megaparsec.Char (space1, string)
+import qualified Data.Map                   as M
+import           Text.Megaparsec            (Parsec, errorBundlePretty, oneOf,
+                                             parse, sepBy1)
+import           Text.Megaparsec.Char       (space1, string)
 import qualified Text.Megaparsec.Char.Lexer as L
 
 type Parser = Parsec Void Text
@@ -18,12 +19,12 @@ type TestTrow = Int
 type Op = WorryLevel -> WorryLevel
 
 data Monkey = Monkey
-    { id :: Id
-    , worryLevels :: [WorryLevel]
+    { id                  :: Id
+    , worryLevels         :: [WorryLevel]
     , inspectionOperation :: Op
-    , testThrow :: TestTrow
-    , idIfTrueThrow :: Id
-    , idIfFalseThrow :: Id
+    , testThrow           :: TestTrow
+    , idIfTrueThrow       :: Id
+    , idIfFalseThrow      :: Id
     }
 data Game = Game {monkeysMap :: M.Map Id Monkey, inspectedItems :: M.Map Id Int} deriving (Show)
 

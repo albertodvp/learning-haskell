@@ -14,6 +14,6 @@ res = square_sums - sum_squares
 
 p6 :: Integer
 p6 = sum [ 2 * x * y | x <- range, y <- range , x > y]
-  
+
 
 

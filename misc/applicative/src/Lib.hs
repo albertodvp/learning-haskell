@@ -2,7 +2,7 @@
 
 module Lib where
 
-import Control.Applicative (liftA2)
+import           Control.Applicative (liftA2)
 -- ZipList
 newtype ZL a = ZL { getZL :: [a] } deriving (Eq, Show)
 
@@ -21,20 +21,20 @@ data Bin a = Leaf a | Bin (Bin a) (Bin a) deriving (Eq, Show)
 
 instance Functor Bin where
   fmap f (Leaf a)    = Leaf $ f a
-  fmap f (Bin ba bb) = Bin (f <$> ba) (f <$> bb) 
+  fmap f (Bin ba bb) = Bin (f <$> ba) (f <$> bb)
 
 instance Applicative Bin where
   pure = Leaf
-  (Leaf f) <*> baa = f <$> baa
+  (Leaf f) <*> baa            = f <$> baa
   (Bin bf bg) <*> la@(Leaf _) = Bin (bf <*> la) (bg <*> la)
   (Bin bf bg) <*> (Bin ba bb) = Bin (bf <*> ba) (bg <*> bb)
 
-  
+
 -- BinL
 data BinL a = BinL a (BinL a) (BinL a) | LeafL deriving (Eq, Show)
 
 instance Functor BinL where
-  fmap _ LeafL = LeafL
+  fmap _ LeafL            = LeafL
   fmap f (BinL a blb blc) = BinL (f a) (f <$> blb) (f <$> blc)
 
 instance Applicative BinL where
@@ -55,13 +55,13 @@ data Rose a = Rose [Rose a] | LeafRose a deriving (Eq, Show)
 
 instance Functor Rose where
   fmap f (LeafRose a) = LeafRose $ f a
-  fmap f (Rose xs) = Rose $ (f <$>) <$>  xs
+  fmap f (Rose xs)    = Rose $ (f <$>) <$>  xs
 
 instance Applicative Rose where
   pure = LeafRose
   (LeafRose f) <*> rs = f <$> rs
-  Rose rfs <*> rs = Rose $ (<*> rs) <$> rfs
-  
+  Rose rfs <*> rs     = Rose $ (<*> rs) <$> rfs
+
 
 -- RoseL
 data RoseL a = RoseL a [RoseL a] deriving (Eq, Show)
@@ -82,7 +82,7 @@ instance Applicative (Reader r) where
   pure = Reader . const
   Reader rf <*> Reader rx = Reader $ rf <*> rx
 
-  
+
 -- State
 
 newtype State s a = State {runState :: s -> (a, s)} deriving (Functor)
@@ -108,12 +108,3 @@ instance Monoid w => Applicative (Writer w) where
 
 -- Cont
 newtype Cont r a = Cont {runCont :: (a -> r) -> r}
-
-
-instance Functor (Cont r) where
-  fmap f (Cont fr) = Cont $ (br -> 
-
-
-instance Applicative (Cont r) where
-  pure = und
-  

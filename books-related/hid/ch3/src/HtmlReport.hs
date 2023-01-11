@@ -2,17 +2,17 @@
 
 module HtmlReport where
 
-import Text.Blaze.Html5 as H
-import Text.Blaze.Html5.Attributes (src)
-import Text.Blaze.Colonnade
-import StatReport
-import Colonnade
-import Text.Blaze.Html.Renderer.Utf8 (renderHtml)
-import Fmt
-import QuoteData
-import Data.ByteString.Lazy (ByteString)
-import Control.Monad(unless)
-import Data.Foldable (traverse_)
+import           Colonnade
+import           Control.Monad                 (unless)
+import           Data.ByteString.Lazy          (ByteString)
+import           Data.Foldable                 (traverse_)
+import           Fmt
+import           QuoteData
+import           StatReport
+import           Text.Blaze.Colonnade
+import           Text.Blaze.Html.Renderer.Utf8 (renderHtml)
+import           Text.Blaze.Html5              as H
+import           Text.Blaze.Html5.Attributes   (src)
 viaFmt :: Buildable a => a -> Html
 viaFmt = text . pretty
 
@@ -24,7 +24,7 @@ colStats = mconcat
   , headed "Max" (viaFmt. maxVal)
   , headed "Days between Min/Max" (viaFmt . daysBetweenMinMax)
   ]
-                                       
+
 
 colData :: Colonnade Headed QuoteData Html
 colData = mconcat
@@ -33,7 +33,7 @@ colData = mconcat
   , headed "Close" (viaFmt . showPrice . close)
   , headed "High" (viaFmt . showPrice . high)
   , headed "Low" (viaFmt . showPrice . low)
-  , headed "Volume" (viaFmt . volume)    
+  , headed "Volume" (viaFmt . volume)
   ]
 
 
@@ -53,5 +53,5 @@ htmlReport docTitle quotes statEntries  images = renderHtml $ docTypeHtml $ do
     encodeHtmlTable mempty colData quotes
   where
     tableStyle = "table {border-collapse: collapse}" <> "td, th {border: 1px solid black; padding 5px}"
-  
-    
+
+

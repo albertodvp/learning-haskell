@@ -1,15 +1,15 @@
-{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Day04 (day04) where
 
-import Protolude
+import           Protolude
 
-import Text.Megaparsec (Parsec, runParser)
-import Text.Megaparsec.Char (char)
+import           Text.Megaparsec            (Parsec, runParser)
+import           Text.Megaparsec.Char       (char)
 import qualified Text.Megaparsec.Char.Lexer as L
 
-import qualified Data.Set as S
+import qualified Data.Set                   as S
 
 type SetFilter = (S.Set Int -> S.Set Int -> Bool)
 type Parser = Parsec Void Text

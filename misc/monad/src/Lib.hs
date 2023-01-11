@@ -12,7 +12,7 @@ instance Applicative (Reader r) where
 instance Monad (Reader r) where
   Reader ra >>= fr = undefined
 
-    
+
 
 -- State
 

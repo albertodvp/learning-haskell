@@ -1,6 +1,6 @@
 module P1 where
 
-import Data.Monoid
+import           Data.Monoid
 type Predicates = Int -> Bool
 mkFilter :: [Predicates] -> Int -> Bool
 mkFilter p = getAny . foldMap (Any .) p
