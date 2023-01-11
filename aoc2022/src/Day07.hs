@@ -1,17 +1,18 @@
-{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Day07 (module Day07) where
 
-import Control.Applicative.Combinators (choice)
-import qualified Data.List as List
-import qualified Data.Text as T
-import Protolude
-import Text.Megaparsec (Parsec, errorBundlePretty, parse, takeWhile1P)
-import Text.Megaparsec.Char (eol, string)
-import qualified Text.Megaparsec.Char.Lexer as L
-import Utils
+import           Control.Applicative.Combinators (choice)
+import qualified Data.List                       as List
+import qualified Data.Text                       as T
 import qualified Prelude
+import           Protolude
+import           Text.Megaparsec                 (Parsec, errorBundlePretty,
+                                                  parse, takeWhile1P)
+import           Text.Megaparsec.Char            (eol, string)
+import qualified Text.Megaparsec.Char.Lexer      as L
+import           Utils
 
 type Size = Int
 type NodeName = Text
@@ -83,10 +84,10 @@ runCommand ChangeBack FSState{root = root, path = path} = FSState root $ List.dr
 runCommand (ChangeDir nodeName) FSState{root = root, path = path} = FSState root $ nodeName : path
 runCommand (List entries) FSState{root = root, path = path} = case foldM (insertInto (reverse path)) root entries of
     Right newRoot -> FSState newRoot path
-    Left err -> Prelude.error $ T.unpack err -- NOTE: assume the output is semantically correct
+    Left err      -> Prelude.error $ T.unpack err -- NOTE: assume the output is semantically correct
 
 dirs :: FSNode -> [(Size, NodeName)]
-dirs (FSNode _ _ Nothing) = []
+dirs (FSNode _ _ Nothing)            = []
 dirs (FSNode dirName size (Just xs)) = (size, dirName) : concatMap dirs xs
 
 fsStateP :: Parser FSState

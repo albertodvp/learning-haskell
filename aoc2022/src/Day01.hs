@@ -2,10 +2,10 @@
 
 module Day01 (day01) where
 
-import Control.Applicative (liftA2)
-import Data.List (sortBy)
-import qualified Data.Text as T
-import qualified Data.Text.IO as TIO
+import           Control.Applicative (liftA2)
+import           Data.List           (sortBy)
+import qualified Data.Text           as T
+import qualified Data.Text.IO        as TIO
 
 parseNumber :: T.Text -> Int
 parseNumber = read . T.unpack

@@ -1,6 +1,6 @@
 module Ciphers where
 
-import Data.Char
+import           Data.Char
 
 wrapCharIndex :: Int -> Int
 wrapCharIndex x = mod (x - ord 'A') (ord 'z') + ord 'A'

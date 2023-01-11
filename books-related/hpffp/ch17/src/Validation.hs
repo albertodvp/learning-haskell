@@ -17,4 +17,4 @@ instance Monoid e => Applicative (Validation e) where
   (<*>) (Failure e) (Failure e') = Failure $ e <> e'
   (<*>) (Failure e) _            = Failure e
   (<*>) _           (Failure e)  = Failure e
-  (<*>) (Success f) (Success a) = Success $ f a
+  (<*>) (Success f) (Success a)  = Success $ f a

@@ -14,7 +14,7 @@ mayybee _ f (Just a) = f a
 
 
 fromMaybe :: a -> Maybe a -> a
-fromMaybe a Nothing = a
+fromMaybe a Nothing  = a
 fromMaybe _ (Just a) = a
 
 
@@ -28,7 +28,7 @@ listToMaybe (x:_) = Just x
 
 
 maybeToList :: Maybe a -> [a]
-maybeToList Nothing = []
+maybeToList Nothing  = []
 maybeToList (Just a) = [a]
 
 

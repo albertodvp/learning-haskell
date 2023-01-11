@@ -1,13 +1,13 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Lib (extractVocab, allWordsReport, wordsCountReport, frequentWordsReport) where
-import Data.Text (Text)
+import           Data.Text (Text)
 
-import Fmt
 import qualified Data.Text as T
+import           Fmt
 
-import Data.Char (isLetter)
-import Data.List (sortBy, sort, group)
-import Data.Ord
+import           Data.Char (isLetter)
+import           Data.List (group, sort, sortBy)
+import           Data.Ord
 
 type Entry = (T.Text, Int)
 type Vocabulary = [Entry]
@@ -21,7 +21,7 @@ extractVocab t = map buildEntry $ group $ sort ws''
     cleanWord = T.dropAround (not . isLetter)
     buildEntry xs@(x:_) = (x, length xs)
 
-    
+
 allWords :: Vocabulary -> [Text]
 allWords = map fst
 
@@ -29,7 +29,7 @@ wordsCount :: Vocabulary -> (Int, Int)
 wordsCount v = (total, unique)
   where
     total = sum $ map snd v
-    unique = length $ map fst v    
+    unique = length $ map fst v
 
 wordsByFrequency :: Vocabulary -> Vocabulary
 wordsByFrequency = sortBy (comparing $ Down . snd)
@@ -44,7 +44,7 @@ wordsCountReport v = fmt $
   "\nNumber of unique words: " +|unique|+ "\n"
   where
     (total, unique) = wordsCount v
-  
+
 frequentWordsReport :: Vocabulary -> Int -> Text
 frequentWordsReport v n =
   fmt $ nameF "Frequent words"

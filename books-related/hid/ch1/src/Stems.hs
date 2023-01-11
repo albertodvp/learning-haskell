@@ -1,21 +1,23 @@
 -- NOTE: this exercise was proposed in an event organized by the study group
 --       of the [Haskell Milano Meetup](https://www.meetup.com/haskell-milano/)
 
-{-# LANGUAGE DeriveFoldable #-}
+{-# LANGUAGE DeriveFoldable             #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
-{-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE NoImplicitPrelude          #-}
 
-module Stems where
+module Stems(module Stems) where
 
-import Protolude hiding (empty)
+import           Protolude hiding (empty)
 
 import qualified Prelude
 
-import Data.Text (unpack, toLower, dropAround)
+import           Data.Text (dropAround, toLower, unpack)
 
-import qualified Data.Map as M
+import qualified Data.Map  as M
+
 newtype Stem a = Stem {unStem :: [a]} deriving (Foldable, Show, Eq)
 
+type Parser = Parsac Void [Char]
 
 --
 cleanLine :: Text -> [Char]
@@ -25,7 +27,7 @@ cleanLine = go . toS . Data.Text.toLower
     go (x:xs)
       | x `elem` ".:,'()&!?;" = ' ':go xs
       | otherwise = x:go xs
-      
+
 
 -- TODO toS vs unpack?
 getStems :: Text -> [Stem Char]
@@ -74,7 +76,7 @@ query :: Eq a =>
 query n pop base = take n $ sortOn (fromMaybe 0 . value pop base) (unPopulation $ subs base pop)
 
 
--- TODO: refine the value function so that query returns something better :-) 
+-- TODO: refine the value function so that query returns something better :-)
 -- (in case you do not like it)
 
 
@@ -93,7 +95,7 @@ instance Foldable PopulationTrie where
       g (a, p) m = f a <> foldMap f p <> m
 
 -- TODO: instance Foldable PopulationTrie where
--- TODO: instance Semigroup PopulationTrie where  
+-- TODO: instance Semigroup PopulationTrie where
 -- TODO: instance Monoid PopulationTrie where
 -- TODO: rewrite insert
 
@@ -124,7 +126,7 @@ unTrie (Stem base) p = map (Stem . (base ++). unStem . Prelude.head) $ group $ s
       | M.null m = acc
       | otherwise = foldr (g base' acc) [] (M.toList m)
     g :: Stem a -> [Stem a] -> (a, PopulationTrie a) -> [Stem a] -> [Stem a]
-    g (Stem base') acc (a, q) ss = let newBase = Stem $ base'++[a] 
+    g (Stem base') acc (a, q) ss = let newBase = Stem $ base'++[a]
                                   in go newBase q (newBase:ss ++ acc)
 
 unTrie' :: Ord a => PopulationTrie a -> [Stem a]
@@ -134,12 +136,12 @@ navigate :: Ord a => Stem a -> PopulationTrie a -> PopulationTrie a
 navigate (Stem []) p = p
 navigate (Stem (x:xs)) (PopulationTrie m) = case M.lookup x m of
   Just trie -> navigate (Stem xs) trie
-  Nothing -> empty
+  Nothing   -> empty
 
 
 -- | select the trie of the given stem and traverse all children to
 -- rebuild the 'n' best super-stems
-queryTrie :: Ord a => 
+queryTrie :: Ord a =>
   -- | maximum number of super stems
   Int ->
   -- | stem population
@@ -148,7 +150,7 @@ queryTrie :: Ord a =>
   Stem a ->
   -- | super stems
   [Stem a]
--- TODO user value  
+-- TODO user value
 queryTrie num pop base = take num $ unTrie base $ navigate base pop
 
 -- TODO: prove that is possible/impossible to prune the search based on values only

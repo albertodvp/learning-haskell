@@ -1,7 +1,7 @@
 {-# LANGUAGE InstanceSigs #-}
 module ReaderMonad where
 
-import Data.Char
+import           Data.Char
 
 
 newtype Reader r a =

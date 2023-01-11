@@ -5,7 +5,7 @@ isPrime x = go 2
   where
     go n
       | n > floor (sqrt (fromIntegral x)) = True
-      | otherwise   = 
+      | otherwise   =
           mod x n /= 0 && go (n + 1)
 -- >>> isPrime 1
 -- True
@@ -29,5 +29,5 @@ main = do
          let n = read x :: Int
          putStrLn $ "Checking if " ++ show n ++ " is prime..."
          putStrLn $ if isPrime n then "It's prime!" else "It's not prime!"
-         
+
 

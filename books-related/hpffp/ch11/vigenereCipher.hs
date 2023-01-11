@@ -1,6 +1,6 @@
 module VigenereChipher where
 
-import Data.Char
+import           Data.Char
 
 type Keyword = String
 type Alphabet = String

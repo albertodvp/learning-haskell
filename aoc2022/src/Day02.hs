@@ -2,10 +2,10 @@
 
 module Day02 (day02) where
 
-import Control.Applicative (liftA2)
-import Data.Text (Text)
-import qualified Data.Text as T
-import qualified Data.Text.IO as TIO
+import           Control.Applicative (liftA2)
+import           Data.Text           (Text)
+import qualified Data.Text           as T
+import qualified Data.Text.IO        as TIO
 
 data Choice = Rock | Paper | Scissors deriving (Eq)
 data Result = Lose | Draw | Win
@@ -15,7 +15,7 @@ parseResult :: Char -> Result
 parseResult 'X' = Lose
 parseResult 'Y' = Draw
 parseResult 'Z' = Win
-parseResult _ = error "error"
+parseResult _   = error "error"
 
 parseChoice :: Char -> Choice
 parseChoice c
@@ -27,7 +27,7 @@ parseChoice c
 parseRoundP1 :: Text -> Round
 parseRoundP1 t = case T.unpack t of
     [c1, ' ', c2] -> (parseChoice c1, parseChoice c2)
-    _ -> error "Wrong input"
+    _             -> error "Wrong input"
 
 parseRoundP2 :: Text -> Round
 parseRoundP2 t = case T.unpack t of
@@ -39,16 +39,16 @@ parseRoundP2 t = case T.unpack t of
 choiceFromResult :: Result -> Choice -> Choice
 choiceFromResult Draw = id
 choiceFromResult Lose = choiceToWin . choiceToWin
-choiceFromResult Win = choiceToWin
+choiceFromResult Win  = choiceToWin
 
 choiceToWin :: Choice -> Choice
 choiceToWin Scissors = Rock
-choiceToWin Paper = Scissors
-choiceToWin Rock = Paper
+choiceToWin Paper    = Scissors
+choiceToWin Rock     = Paper
 
 choiceValue :: Choice -> Int
-choiceValue Rock = 1
-choiceValue Paper = 2
+choiceValue Rock     = 1
+choiceValue Paper    = 2
 choiceValue Scissors = 3
 
 roundScore :: Choice -> Choice -> Int

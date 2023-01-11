@@ -2,11 +2,11 @@
 
 module Day03 (day03) where
 
-import qualified Data.Map as M
-import qualified Data.Set as S
-import Data.Text (unpack)
-import Protolude
+import qualified Data.Map  as M
+import qualified Data.Set  as S
+import           Data.Text (unpack)
 import qualified Prelude
+import           Protolude
 
 type Rucksack = (S.Set Char, S.Set Char)
 

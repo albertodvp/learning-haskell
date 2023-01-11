@@ -11,7 +11,7 @@ rights' = foldl f []
   where
     f acc x = case x of
       Right b -> b:acc
-      Left _ -> acc
+      Left _  -> acc
 
 
 partitionsEithers' :: [Either a b] -> ([a], [b])

@@ -1,6 +1,6 @@
 module P3 where
 
-import Data.List (find)
+import           Data.List (find)
 
 isPrime :: Integer -> Bool
 isPrime x = not $ any ((==0) . rem x) [2..x-1]

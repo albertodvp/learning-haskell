@@ -7,8 +7,8 @@ fib2 :: [Int]
 fib2 = scanl (+) 0 (1:fib2)
 
 p2 :: Int
-p2 = sum $ w f 
+p2 = sum $ w f
   where
     w = takeWhile (< 4000000)
     f = filter even fib1
-       
+

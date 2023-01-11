@@ -1,9 +1,10 @@
 module Day10 (module Day10) where
 
-import Data.List (scanl')
-import Data.Void (Void)
-import Text.Megaparsec (Parsec, errorBundlePretty, many, parse, takeWhileP, (<|>))
-import Text.Megaparsec.Char (eol, string)
+import           Data.List            (scanl')
+import           Data.Void            (Void)
+import           Text.Megaparsec      (Parsec, errorBundlePretty, many, parse,
+                                       takeWhileP, (<|>))
+import           Text.Megaparsec.Char (eol, string)
 
 data Op = Noop | Addx Int deriving (Show)
 type Parser = Parsec Void String
@@ -17,7 +18,7 @@ opsP :: Parser [Op]
 opsP = concat <$> many ((addxP <|> noopP) <* eol)
 
 doOp :: Op -> Register -> Register
-doOp Noop = id
+doOp Noop     = id
 doOp (Addx x) = (x +)
 
 process :: [Op] -> [Register]

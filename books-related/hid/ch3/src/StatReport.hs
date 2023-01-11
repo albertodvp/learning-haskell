@@ -1,26 +1,26 @@
-{-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RecordWildCards   #-}
 module StatReport where
 
-import QuoteData
-import Data.Ord (comparing)
-import Data.Foldable (minimumBy, maximumBy)
-import Data.Time (diffDays)
-import Fmt 
-import Colonnade
+import           Colonnade
+import           Data.Foldable (maximumBy, minimumBy)
+import           Data.Ord      (comparing)
+import           Data.Time     (diffDays)
+import           Fmt
+import           QuoteData
 
 decimalPlacesFloating = 2
 
 data StatValue = StatValue {
   decimalPlaces :: Int,
-  value :: Double
+  value         :: Double
 }
 
 data StatEntry = StatEntry {
-  qfield :: QField,
-  meanVal :: StatValue,
-  minVal :: StatValue,
-  maxVal :: StatValue,
+  qfield            :: QField,
+  meanVal           :: StatValue,
+  minVal            :: StatValue,
+  maxVal            :: StatValue,
   daysBetweenMinMax :: Int
 }
 
@@ -40,7 +40,7 @@ statInfo :: (Functor t, Foldable t) => t QuoteData -> [StatEntry]
 statInfo quotes = fmap qFieldStatInfo [minBound .. maxBound]
   where
     decimalPlacesByQField Volume = 0
-    decimalPlacesByQField _ = decimalPlacesFloating
+    decimalPlacesByQField _      = decimalPlacesFloating
     qFieldStatInfo qfield =
       let
         get = field2fun qfield
@@ -77,4 +77,4 @@ textReport = ascii colStats
       , headed "Max" (pretty . maxVal)
       , headed "Days between Min/Max" (pretty . daysBetweenMinMax)
       ]
-                                       
+

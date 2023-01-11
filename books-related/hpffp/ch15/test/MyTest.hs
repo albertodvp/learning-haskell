@@ -1,8 +1,8 @@
 module Main where
 
-import Test.QuickCheck
+import           Test.QuickCheck
 
-import MyLib
+import           MyLib
 
 main :: IO ()
 main = do
@@ -41,4 +41,4 @@ monoidRightIdentity a =
 monoidLeftIdentity :: (Eq m, MyMonoid m) => m -> Bool
 monoidLeftIdentity a =
   (mymempty <~> a) == a
-  
+

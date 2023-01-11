@@ -1,8 +1,8 @@
 module UtilsTest (utilsTests) where
 
-import Utils
+import           Utils
 
-import Test.HUnit
+import           Test.HUnit
 
 utilsTests =
     [ "replaceAt" ~: "" ~: replaceAt 0 1 [42, 2, 3] ~=? [1, 2, 3]

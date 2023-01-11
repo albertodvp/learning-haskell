@@ -1,12 +1,12 @@
--- | 
+-- |
 
 module RandomExample where
 
 
-import System.Random
-import Control.Applicative (liftA3)
-import Control.Monad (replicateM)
-import Control.Monad.Trans.State
+import           Control.Applicative       (liftA3)
+import           Control.Monad             (replicateM)
+import           Control.Monad.Trans.State
+import           System.Random
 
 
 data Die =
@@ -24,8 +24,8 @@ intToDie n =
     1 -> DieOne
     2 -> DieTwo
     3 -> DieThree
-    4 -> DieFour 
-    5 -> DieFive 
+    4 -> DieFour
+    5 -> DieFive
     6 -> DieSix
     x -> error $ "intToDie got non 1-6 intger " ++ show x
 
@@ -38,7 +38,7 @@ rollDieThreeTimes = do
       (d2, s2) = randomR (1,6) s1
       (d3, s3) = randomR (1,6) s2
   (intToDie d1, intToDie d2, intToDie d3)
-      
+
 rollDieThreeTimes' :: Int -> (Die, Die, Die)
 rollDieThreeTimes' x = do
   let s = mkStdGen x
@@ -46,7 +46,7 @@ rollDieThreeTimes' x = do
       (d2, s2) = randomR (1,6) s1
       (d3, s3) = randomR (1,6) s2
   (intToDie d1, intToDie d2, intToDie d3)
-      
+
 
 rollDieThreeTimes'' :: StdGen -> (Die, Die, Die)
 rollDieThreeTimes'' g = do
@@ -54,7 +54,7 @@ rollDieThreeTimes'' g = do
       (d2, s2) = randomR (1,6) s1
       (d3, s3) = randomR (1,6) s2
   (intToDie d1, intToDie d2, intToDie d3)
-      
+
 
 -- With StateT
 
@@ -62,7 +62,7 @@ rollDie :: State StdGen Die
 rollDie = state $ do
   (n, s) <- randomR (1, 6)
   return (intToDie n, s)
-  
+
 
 rollDie' :: State StdGen Die
 rollDie' = intToDie <$> state (randomR (1,6))
@@ -90,6 +90,6 @@ rollsToGetTwenty = go 0 0
       | otherwise =
          let (die, nextGen) = randomR (1,6) gen
          in go (sum + die) (count + 1) nextGen
-         
+
 rs = rollsToGetTwenty .  mkStdGen
 

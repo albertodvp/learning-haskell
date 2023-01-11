@@ -1,17 +1,17 @@
-{-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RecordWildCards   #-}
 module Main where
 
-import Data.Foldable (toList)
-import Data.Csv (decodeByName)
+import           Charts
+import           Control.Monad        (unless, when)
 import qualified Data.ByteString.Lazy as BL
-import QuoteData
-import Data.Text (unpack)
-import Params
-import Control.Monad (unless, when)
-import HtmlReport
-import StatReport
-import Charts
+import           Data.Csv             (decodeByName)
+import           Data.Foldable        (toList)
+import           Data.Text            (unpack)
+import           HtmlReport
+import           Params
+import           QuoteData
+import           StatReport
 
 main :: IO ()
 main = cmdLineParser >>= work
@@ -20,7 +20,7 @@ work :: Params -> IO ()
 work params = do
   csvData <- BL.readFile (fname params)
   case decodeByName csvData of
-    Left err -> putStrLn err
+    Left err          -> putStrLn err
     Right (_, quotes) -> generateReports params quotes
 
 
@@ -36,6 +36,6 @@ generateReports Params {..} quotes = do
     withCompany prefix = maybe mempty (prefix <>) company
     chartFname = unpack $ "chart" <> withCompany "_" <> ".svg"
     title = unpack $ "Historical Quotes" <> withCompany " for "
-    saveHtml Nothing _ = pure ()
+    saveHtml Nothing _     = pure ()
     saveHtml (Just f) html = BL.writeFile f html
-    
+

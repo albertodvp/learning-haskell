@@ -2,11 +2,11 @@
 
 module Charts where
 
-import Data.Foldable (toList)
-import Graphics.Rendering.Chart.Easy
-import Graphics.Rendering.Chart.Backend.Diagrams
+import           Data.Foldable                             (toList)
+import           Graphics.Rendering.Chart.Backend.Diagrams
+import           Graphics.Rendering.Chart.Easy
 
-import QuoteData
+import           QuoteData
 
 plotChart :: Foldable t => String -> t QuoteData -> FilePath -> IO ()
 plotChart title quotes fname = do
@@ -32,7 +32,7 @@ plotChart title quotes fname = do
         $ def
       volumesLayout = layout_plots .~ [ plotBars $ bars "Volume" volumes gray ]
         $ def
-      
+
       candle label values color =
         plot_candle_line_style .~ lineStyle 1 gray
         $ plot_candle_fill .~ True
@@ -59,5 +59,5 @@ plotChart title quotes fname = do
         line_width .~ n
         $ line_color .~ opaque color
         $ def
-    
-  
+
+

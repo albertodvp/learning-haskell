@@ -1,15 +1,15 @@
 module ZipList where
 
-import Control.Applicative
+import           Control.Applicative
 
-import List
+import           List
 
 newtype ZipList' a = ZipList' {getList :: List a} deriving (Eq, Show)
 
 instance Functor ZipList' where
   fmap f (ZipList' xs) = ZipList' $ fmap f xs
 
-  
+
 instance Applicative ZipList' where
   pure x = ZipList' $ repeat' x
   (<*>) (ZipList' fs) (ZipList' as) = ZipList' $ zipWith' ($) fs as

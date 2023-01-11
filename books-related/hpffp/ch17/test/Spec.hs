@@ -1,13 +1,13 @@
-import Control.Applicative
-import Test.QuickCheck
-import Data.Monoid
-import Test.QuickCheck.Checkers
-import Test.QuickCheck.Classes
+import           Control.Applicative
+import           Data.Monoid
+import           Test.QuickCheck
+import           Test.QuickCheck.Checkers
+import           Test.QuickCheck.Classes
 
-import ZipList
-import List
-import qualified Validation as V
-import FinalExs
+import           FinalExs
+import           List
+import qualified Validation               as V
+import           ZipList
 
 instance Arbitrary a => Arbitrary (ZipList' a) where
   arbitrary = ZipList' <$> arbitrary
@@ -46,7 +46,7 @@ instance (Arbitrary a, Arbitrary b) => Arbitrary (Three' a b) where
     b <- arbitrary
     b' <- arbitrary
     return $ Three' a b b'
-    
+
 instance Eq a => EqProp (List a) where
   xs =-= ys = xs' `eq` ys'
     where
@@ -70,7 +70,7 @@ instance (Eq a, Eq b) => EqProp (Two a b) where
 
 instance (Eq a, Eq b, Eq c) => EqProp (Three a b c) where
   (=-=) = eq
-  
+
 instance (Eq a, Eq b) => EqProp (Three' a b ) where
   (=-=) = eq
 
@@ -92,4 +92,4 @@ main = do
   quickBatch $ applicative (undefined :: Three (Sum Int) String (String, Char, Integer))
   quickBatch $ functor (undefined :: Three' (Sum Int) (String, Char, Integer))
   quickBatch $ applicative (undefined :: Three' (Sum Int) (String, Char, Integer))
-  
+

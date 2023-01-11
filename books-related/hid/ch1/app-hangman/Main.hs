@@ -1,14 +1,14 @@
--- | 
+-- |
 
 module Main(main) where
 
-import Data.List (elemIndices)
-import Control.Monad (when)
-import System.Exit (exitSuccess)
+import           Control.Monad (when)
+import           Data.List     (elemIndices)
+import           System.Exit   (exitSuccess)
 data Game = Game { toGuess :: String, guessed :: String} deriving Show
 
 replaceAt :: a -> Int -> [a] -> [a]
-replaceAt _ _ [] = []
+replaceAt _ _ []     = []
 replaceAt y 0 (_:xs) = y:xs
 replaceAt y n (x:xs) = x:replaceAt y (n-1) xs
 
@@ -31,7 +31,7 @@ playRoundIO g = do
   putStrLn "Try your guess: "
   (c:_) <- getLine
   return $ playRound c g
-  
+
 playIO :: Game -> IO ()
 playIO g = do
   when (isEnded g) (putStrLn "Correct." >> exitSuccess)

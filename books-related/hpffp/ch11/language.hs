@@ -1,6 +1,6 @@
-import Data.Char
+import           Data.Char
 
 capitalizeWord :: String -> String
-capitalizeWord "" = ""
+capitalizeWord ""     = ""
 capitalizeWord (x:xs) = toUpper x:xs
 

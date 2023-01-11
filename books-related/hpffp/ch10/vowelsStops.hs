@@ -7,7 +7,7 @@ combs :: String -> String -> [String]
 combs stops vowels= [ [x,y,z] |
                       x <- stops,
                       y <- vowels,
-                      z <- stops ] 
+                      z <- stops ]
 
 combs' :: String -> String -> [String]
 combs' stops vowels= [ [x,y,z] |

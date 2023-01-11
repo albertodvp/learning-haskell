@@ -1,5 +1,5 @@
 module P4 where
-import Data.List (sortBy)
+import           Data.List (sortBy)
 
 -- 12321
 -- 1 -> *10 + 2

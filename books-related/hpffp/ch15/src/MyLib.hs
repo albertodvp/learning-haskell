@@ -2,7 +2,7 @@
 
 module MyLib where
 
-import Test.QuickCheck
+import           Test.QuickCheck
 
 
 class MySemigroup a where
@@ -74,7 +74,7 @@ instance (MySemigroup a, MySemigroup b) => MySemigroup (Two a b) where
   (<~>) (Two a b) (Two a' b') = Two (a <~> a') (b <~> b')
 
 type TwoTriv = Two Trival Trival
-type TwoAssoc = TwoTriv -> TwoTriv -> TwoTriv -> Bool  
+type TwoAssoc = TwoTriv -> TwoTriv -> TwoTriv -> Bool
 
 instance (Arbitrary a, Arbitrary b) => Arbitrary (Two a b) where
   arbitrary = do
@@ -120,7 +120,7 @@ instance MySemigroup (Or a b) where
 
 type OrTrivStr = Or Trival String
 type OrAssoc = OrTrivStr -> OrTrivStr -> OrTrivStr -> Bool
-    
+
 instance (Arbitrary a, Arbitrary b) => Arbitrary (Or a b) where
   arbitrary = do
     a <- arbitrary
@@ -155,8 +155,8 @@ data Validation a b =
 
 instance MySemigroup a => MySemigroup (Validation a b) where
   (<~>) (MyFailure a) (MyFailure a') = MyFailure (a <~> a')
-  (<~>) (MyFailure a) s            = s
-  (<~>) s@(MySuccess b) _          = s
+  (<~>) (MyFailure a) s              = s
+  (<~>) s@(MySuccess b) _            = s
 
 
 -- Mem

@@ -1,11 +1,11 @@
 module RewritingWithFolds where
 
 myFoldr :: (a -> b -> b) -> b -> [a] -> b
-myFoldr _ b [] = b
+myFoldr _ b []     = b
 myFoldr f b (x:xs) = f x (myFoldr f b xs)
 
 myFoldl :: (b -> a -> b) -> b -> [a] -> b
-myFoldl _ b [] = b
+myFoldl _ b []     = b
 myFoldl f b (x:xs) = myFoldl f (f b x) xs
 
 myAnd :: [Bool] -> Bool
@@ -71,5 +71,5 @@ myMinimumBy f (x:xs) = foldr combF x xs
     combF y acc = if f ny acc == LT then y else acc
 
 
-myMinimumBy' _ [] = error "empty list"
+myMinimumBy' _ []     = error "empty list"
 myMinimumBy' f (x:xs) = foldl (\acc x -> if f x acc == LT then x else acc) x xs

@@ -1,9 +1,9 @@
 module Day09 (module Day09) where
 
-import Data.Bifunctor (first, second)
-import Data.Foldable (foldl')
-import Data.List (scanl')
-import qualified Data.Set as S
+import           Data.Bifunctor (first, second)
+import           Data.Foldable  (foldl')
+import           Data.List      (scanl')
+import qualified Data.Set       as S
 
 data Command = U | R | D | L
 type Index = (Int, Int)
@@ -15,11 +15,11 @@ parseCommand c = case c of
     'R' -> R
     'D' -> D
     'L' -> L
-    _ -> error "invalid input"
+    _   -> error "invalid input"
 
 parseCommands :: String -> [Command]
 parseCommands (c : ' ' : n) = parseCommand <$> replicate (read n) c
-parseCommands _ = error "invalid input"
+parseCommands _             = error "invalid input"
 
 nextHeadMove :: Command -> Index -> Index
 nextHeadMove c = case c of

@@ -1,16 +1,16 @@
-{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Day05 (day05) where
 
-import Data.List ((!!))
-import Data.Text (pack)
-import Protolude hiding (head, many, some)
-import Text.Megaparsec
-import Text.Megaparsec.Char (char, eol, string)
+import           Data.List                  ((!!))
+import           Data.Text                  (pack)
+import           Prelude                    (id)
+import           Protolude                  hiding (head, many, some)
+import           Text.Megaparsec
+import           Text.Megaparsec.Char       (char, eol, string)
 import qualified Text.Megaparsec.Char.Lexer as L
-import Utils
-import Prelude (id)
+import           Utils
 
 type Crate = Char
 
@@ -24,7 +24,7 @@ pop n (Stack xs) = (Stack $ take n xs, Stack $ drop n xs)
 push :: Stack a -> Stack a -> Stack a
 push (Stack xs) (Stack ys) = Stack $ xs ++ ys
 head :: Stack a -> Either Text a
-head (Stack []) = Left "Empty stack"
+head (Stack [])      = Left "Empty stack"
 head (Stack (x : _)) = Right x
 mkCrateStacks :: [CrateLine] -> [Stack Crate]
 mkCrateStacks = map (Stack . catMaybes) . transpose

@@ -1,9 +1,9 @@
-import Lib
+import           Lib
 
-import Test.QuickCheck
-import Test.QuickCheck.Checkers
-import Test.QuickCheck.Classes
-import Control.Applicative (liftA, liftA2, liftA3)
+import           Control.Applicative      (liftA, liftA2, liftA3)
+import           Test.QuickCheck
+import           Test.QuickCheck.Checkers
+import           Test.QuickCheck.Classes
 
 -- Cmp
 instance (Applicative f, Applicative g, Arbitrary a) => Arbitrary (Cmp f g a) where
@@ -29,7 +29,7 @@ instance Arbitrary a => Arbitrary (BinL a) where
     (4, return LeafL),
     (1, liftA3 BinL arbitrary arbitrary arbitrary)
     ]
-   
+
 instance Eq a => EqProp (BinL a) where
   b1 =-= b2 = b1 `eq` b2
 
@@ -39,12 +39,12 @@ instance Arbitrary a => Arbitrary (Rose a) where
     (10, liftA LeafRose arbitrary),
     (1, liftA Rose $ frequency [(1, arbitrary), (10, return [])])
     ]
-    
+
 instance Eq a => EqProp (Rose a) where
   r1 =-= r2 = x `eq` y
     where
       takeRose (Rose rs) = Rose $ take 3000 rs
-      takeRose lr = lr
+      takeRose lr        = lr
       x = takeRose r1
       y = takeRose r2
 
@@ -62,7 +62,7 @@ instance Eq a => EqProp (RoseL a) where
       x = takeRose r1
       y = takeRose r2
 
-              
+
 main :: IO()
 main = do
   putStr "\n\n-- Compare --\n"

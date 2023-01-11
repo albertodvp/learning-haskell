@@ -5,7 +5,7 @@ data ProgLang = Haskell | Python | Rust | Go
   deriving Show
 
 data Programmer =
-  Programmer { os :: OS,
+  Programmer { os   :: OS,
                lang :: ProgLang
              }
   deriving Show

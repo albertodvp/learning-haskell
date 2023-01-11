@@ -13,7 +13,7 @@ splitLineOnGivenChar c = splitListOn (/=c)
 
 
 -- List comprehensions
- 
+
 double_list l = [x*2 | x <- l]
 double_list_with_predicate l p = [x*2 | x <- l, p x]
 
