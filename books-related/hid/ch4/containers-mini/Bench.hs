@@ -1,7 +1,5 @@
 -- |
 
-module Bench where
-
 import qualified Data.Deque    as D
 import           Data.List     (unfoldr)
 import qualified Data.Stack    as S
