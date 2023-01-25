@@ -1,6 +1,8 @@
 module Main (main) where
 
-import Lib
-
+import           Options.Applicative
+import           Params              (parseParams)
 main :: IO ()
-main = someFunc
+main = do
+  params <- execParser (info parseParams mempty)
+  print params
