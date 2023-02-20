@@ -80,7 +80,6 @@ pop'''' = do
   put xs
   pure x
 
-
 evalRPN' :: String -> Maybe Integer
 evalRPN' s = evalStateT st []
   where
@@ -99,3 +98,4 @@ safeRead str = case readMaybe str of
 
 safeRead' :: (Read a, Alternative m) => String -> m a
 safeRead' = maybe empty pure . readMaybe
+

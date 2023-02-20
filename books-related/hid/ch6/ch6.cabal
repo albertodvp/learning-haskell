@@ -25,16 +25,36 @@ source-repository head
 
 library
   exposed-modules:
-      Lib
+      Du.AppTypes
+      Du.FileCounter
+      Du.AppRWST
+      Du.DirTree
+      Du.DiskUsage
   other-modules:
+      AppRWST
+      AppTypes
+      Du.Utils
+      Lib
       Paths_ch6
   hs-source-dirs:
       src
+  default-extensions:
+      OverloadedStrings
+      RecordWildCards
+      NamedFieldPuns
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       base >=4.7 && <5
+    , directory
+    , extra
+    , filepath
     , mtl
+    , optparse-applicative
+    , text
+    , text-show
     , transformers
+    , unix
+    , unix-compat
   default-language: Haskell2010
 
 executable ch6-exe
@@ -43,12 +63,50 @@ executable ch6-exe
       Paths_ch6
   hs-source-dirs:
       app
+  default-extensions:
+      OverloadedStrings
+      RecordWildCards
+      NamedFieldPuns
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
     , ch6
+    , directory
+    , extra
+    , filepath
     , mtl
+    , optparse-applicative
+    , text
+    , text-show
     , transformers
+    , unix
+    , unix-compat
+  default-language: Haskell2010
+
+executable du
+  main-is: Main.hs
+  other-modules:
+      Paths_ch6
+  hs-source-dirs:
+      app/du
+  default-extensions:
+      OverloadedStrings
+      RecordWildCards
+      NamedFieldPuns
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , ch6
+    , directory
+    , extra
+    , filepath
+    , mtl
+    , optparse-applicative
+    , text
+    , text-show
+    , transformers
+    , unix
+    , unix-compat
   default-language: Haskell2010
 
 test-suite ch6-test
@@ -58,10 +116,22 @@ test-suite ch6-test
       Paths_ch6
   hs-source-dirs:
       test
+  default-extensions:
+      OverloadedStrings
+      RecordWildCards
+      NamedFieldPuns
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
     , ch6
+    , directory
+    , extra
+    , filepath
     , mtl
+    , optparse-applicative
+    , text
+    , text-show
     , transformers
+    , unix
+    , unix-compat
   default-language: Haskell2010
