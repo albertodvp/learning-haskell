@@ -2,6 +2,7 @@
 
 module MyMaybeT where
 
+
 newtype MaybeT m a = MaybeT { runMaybeT :: m (Maybe a) }
 
 instance Functor f => Functor (MaybeT f) where
@@ -19,6 +20,7 @@ instance Applicative f => Applicative (MaybeT f) where
 
 instance Monad m => Monad (MaybeT m)  where
   (>>=) :: MaybeT m a -> (a -> MaybeT m b) -> MaybeT m b
-  MaybeT mMa >>= faMmMb = undefined
-
-
+  MaybeT mMa >>= faMTmb = MaybeT $ mMa >>= g
+    where
+      g (Just a) = runMaybeT $ faMTmb a
+      g Nothing  = pure Nothing
