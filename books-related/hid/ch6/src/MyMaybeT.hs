@@ -1,6 +1,9 @@
-{-# LANGUAGE InstanceSigs #-}
+{-# LANGUAGE InstanceSigs         #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 module MyMaybeT where
+import           Control.Monad.RWS   (MonadState, state)
+import           Control.Monad.Trans
 
 
 newtype MaybeT m a = MaybeT { runMaybeT :: m (Maybe a) }
@@ -24,3 +27,12 @@ instance Monad m => Monad (MaybeT m)  where
     where
       g (Just a) = runMaybeT $ faMTmb a
       g Nothing  = pure Nothing
+
+instance MonadTrans MaybeT where
+  lift :: Monad m => m a -> MaybeT m a
+  lift = MaybeT . fmap Just
+
+instance MonadState s m => MonadState s (MaybeT m) where
+  state :: MonadState s m => (s -> (a, s)) -> MaybeT m a
+  state = lift . state
+
