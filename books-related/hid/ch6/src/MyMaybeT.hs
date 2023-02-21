@@ -1,5 +1,5 @@
-{-# LANGUAGE InstanceSigs         #-}
-{-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE InstanceSigs #-}
+
 
 module MyMaybeT where
 import           Control.Monad.RWS   (MonadState, state)
@@ -31,8 +31,3 @@ instance Monad m => Monad (MaybeT m)  where
 instance MonadTrans MaybeT where
   lift :: Monad m => m a -> MaybeT m a
   lift = MaybeT . fmap Just
-
-instance MonadState s m => MonadState s (MaybeT m) where
-  state :: MonadState s m => (s -> (a, s)) -> MaybeT m a
-  state = lift . state
-

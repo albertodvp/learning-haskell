@@ -30,6 +30,7 @@ library
       Du.AppRWST
       Du.DirTree
       Du.DiskUsage
+      Expr
   other-modules:
       AppRTWTST
       AppRWST
@@ -50,6 +51,8 @@ library
     , directory
     , extra
     , filepath
+    , hspec
+    , hspec-contrib
     , mtl
     , optparse-applicative
     , text
@@ -76,6 +79,8 @@ executable ch6-exe
     , directory
     , extra
     , filepath
+    , hspec
+    , hspec-contrib
     , mtl
     , optparse-applicative
     , text
@@ -102,6 +107,8 @@ executable du
     , directory
     , extra
     , filepath
+    , hspec
+    , hspec-contrib
     , mtl
     , optparse-applicative
     , text
@@ -129,6 +136,8 @@ test-suite ch6-test
     , directory
     , extra
     , filepath
+    , hspec
+    , hspec-contrib
     , mtl
     , optparse-applicative
     , text

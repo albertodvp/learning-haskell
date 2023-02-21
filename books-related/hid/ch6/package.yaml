@@ -31,6 +31,8 @@ dependencies:
 - text-show
 - unix
 - extra
+- hspec
+- hspec-contrib
 
 ghc-options:
 - -Wall
@@ -54,7 +56,8 @@ library:
   - Du.FileCounter
   - Du.AppRWST
   - Du.DirTree
-  - Du.DiskUsage  
+  - Du.DiskUsage
+  - Expr
 executables:
   ch6-exe:
     main:                Main.hs
