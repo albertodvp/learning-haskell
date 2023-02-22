@@ -33,7 +33,8 @@ dependencies:
 - extra
 - hspec
 - hspec-contrib
-
+- attoparsec
+- scientific
 ghc-options:
 - -Wall
 - -Wcompat
