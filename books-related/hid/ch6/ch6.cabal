@@ -35,6 +35,7 @@ library
       AppRTWTST
       AppRWST
       AppTypes
+      CG
       Du.Utils
       Lib
       MyMaybeT
