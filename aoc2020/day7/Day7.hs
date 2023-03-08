@@ -68,4 +68,3 @@ p1 = length . bfs c . contentToContainers
 
 main :: IO ()
 main = readFile "./input" >>= print . p1 . T.lines . T.pack
-

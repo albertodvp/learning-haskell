@@ -25,6 +25,9 @@ dependencies:
 - hspec-contrib
 - mtl
 - text
+- aeson
+- req
+- transformers
 ghc-options:
 - -Wall
 - -Wcompat
