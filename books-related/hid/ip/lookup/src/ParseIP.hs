@@ -3,7 +3,6 @@ module ParseIP where
 import           Control.Applicative
 import           Control.Monad
 import           Data.List.Split
-import           Data.Word
 import           IPTypes
 import           Text.Read
 
@@ -38,7 +37,7 @@ isLengthOf :: Int -> [a] -> Bool
 isLengthOf n xs = length xs == n
 
 
-buildIP :: [Word8] -> IP
+buildIP :: [Int] -> IP
 buildIP = IP . fst . foldr f (0,0)
   where
     f x (s, i) = (s + fromIntegral x * 256^i, i+1)

@@ -1,2 +1,19 @@
 cradle:
   stack:
+    - path: "./test/Spec.hs"
+      component: "lookup:test:lookup-test"
+
+    - path: "./app/Main.hs"
+      component: "lookup:exe:lookup-exe"
+
+    - path: "./src/IPTypes.hs"
+      component: "lookup:lib"
+
+    - path: "./src/Lib.hs"
+      component: "lookup:lib"
+
+    - path: "./src/LookupIP.hs"
+      component: "lookup:lib"
+
+    - path: "./src/ParseIP.hs"
+      component: "lookup:lib"
