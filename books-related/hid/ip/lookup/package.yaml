@@ -24,6 +24,10 @@ dependencies:
 - exceptions
 - text
 - split
+- optparse-applicative
+- tasty
+- tasty-hspec
+
 ghc-options:
 - -Wall
 - -Wcompat
