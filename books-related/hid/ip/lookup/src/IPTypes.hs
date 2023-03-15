@@ -5,9 +5,9 @@ import           Data.Word
 
 newtype IP = IP { unIP :: Word32 } deriving (Eq, Ord, Show)
 
-data IPRange = IPRange IP IP deriving Eq
+data IPRange = IPRange IP IP deriving (Eq, Show)
 
-newtype IPRangeDB = IPRangeDB [IPRange] deriving Eq
+newtype IPRangeDB = IPRangeDB [IPRange] deriving (Eq, Show)
 
 type LineNumber = Int
 

@@ -25,8 +25,6 @@ dependencies:
 - text
 - split
 - optparse-applicative
-- tasty
-- tasty-hspec
 
 ghc-options:
 - -Wall
@@ -57,9 +55,16 @@ tests:
   lookup-test:
     main:                Spec.hs
     source-dirs:         test
+    other-modules:
+      - LookupIPSpec
+      - ParseIPSpec
     ghc-options:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
     - lookup
+    - tasty
+    - hspec
+    - tasty-hspec
+

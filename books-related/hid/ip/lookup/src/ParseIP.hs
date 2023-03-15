@@ -1,8 +1,11 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TypeApplications  #-}
 module ParseIP where
 import           Control.Applicative
 import           Control.Monad
+import           Data.Bits           (toIntegralSized)
 import           Data.List.Split
+import           Data.Word           (Word8)
 import           IPTypes
 import           Text.Read
 
@@ -12,10 +15,8 @@ guarded f x = if f x then pure x else empty
 
 parseIP :: String -> Maybe IP
 parseIP = guarded (4 `isLengthOf`) . splitOn "."
-          >=> mapM (readMaybe >=> guarded fitsOctet)
+          >=> mapM (readMaybe @Integer >=> toIntegralSized)
           >=> pure . buildIP
-  where
-    fitsOctet x = 0 <= x && x < 256
 
 parseIPRange :: String -> Maybe IPRange
 parseIPRange = guarded (2 `isLengthOf`) . splitOn ","
@@ -37,7 +38,7 @@ isLengthOf :: Int -> [a] -> Bool
 isLengthOf n xs = length xs == n
 
 
-buildIP :: [Int] -> IP
+buildIP :: [Word8] -> IP
 buildIP = IP . fst . foldr f (0,0)
   where
     f x (s, i) = (s + fromIntegral x * 256^i, i+1)

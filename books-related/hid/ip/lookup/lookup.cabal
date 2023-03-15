@@ -39,8 +39,6 @@ library
     , exceptions
     , optparse-applicative
     , split
-    , tasty
-    , tasty-hspec
     , text
   default-language: Haskell2010
 
@@ -57,8 +55,6 @@ executable lookup-exe
     , lookup
     , optparse-applicative
     , split
-    , tasty
-    , tasty-hspec
     , text
   default-language: Haskell2010
 
@@ -66,14 +62,15 @@ test-suite lookup-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      LookupIPSpec
       ParseIPSpec
-      Paths_lookup
   hs-source-dirs:
       test
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
     , exceptions
+    , hspec
     , lookup
     , optparse-applicative
     , split
