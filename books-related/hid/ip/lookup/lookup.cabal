@@ -37,6 +37,7 @@ library
   build-depends:
       base >=4.7 && <5
     , exceptions
+    , hedgehog
     , optparse-applicative
     , split
     , text
@@ -52,6 +53,7 @@ executable lookup-exe
   build-depends:
       base >=4.7 && <5
     , exceptions
+    , hedgehog
     , lookup
     , optparse-applicative
     , split
@@ -70,11 +72,13 @@ test-suite lookup-test
   build-depends:
       base >=4.7 && <5
     , exceptions
+    , hedgehog
     , hspec
     , lookup
     , optparse-applicative
     , split
     , tasty
+    , tasty-hedgehog
     , tasty-hspec
     , text
   default-language: Haskell2010

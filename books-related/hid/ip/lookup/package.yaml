@@ -25,6 +25,8 @@ dependencies:
 - text
 - split
 - optparse-applicative
+- hedgehog
+
 
 ghc-options:
 - -Wall
@@ -67,4 +69,5 @@ tests:
     - tasty
     - hspec
     - tasty-hspec
+    - tasty-hedgehog
 
