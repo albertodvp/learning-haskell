@@ -1,0 +1,34 @@
+name:                ch11
+version:             0.1.0.0
+-- synopsis:
+-- description:
+homepage:            https://github.com/albertodvp/ch11#readme
+license:             BSD3
+license-file:        LICENSE
+author:              Alberto Fanton
+maintainer:          alberto.fanton@protonmail.com
+copyright:           Copyright (c) 2022 Alberto Fanton
+category:            Learning
+build-type:          Simple
+extra-source-files:  README.md
+                     CHANGELOG.md
+cabal-version:       >=1.10
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     Lib
+  build-depends:       base >= 4.7 && < 5
+  default-language:    Haskell2010
+  ghc-options:         -Wall
+                       -Wcompat
+                       -Widentities
+                       -Wincomplete-record-updates
+                       -Wincomplete-uni-patterns
+                       -Wmissing-export-lists
+                       -Wmissing-home-modules
+                       -Wpartial-fields
+                       -Wredundant-constraints
+
+source-repository head
+  type:     git
+  location: https://github.com/albertodvp/ch11
