@@ -37,7 +37,6 @@ library
   build-depends:
       base >=4.7 && <5
     , exceptions
-    , hedgehog
     , optparse-applicative
     , split
     , text
@@ -53,7 +52,24 @@ executable lookup-exe
   build-depends:
       base >=4.7 && <5
     , exceptions
-    , hedgehog
+    , lookup
+    , optparse-applicative
+    , split
+    , text
+  default-language: Haskell2010
+
+test-suite lookup-doctest
+  type: exitcode-stdio-1.0
+  main-is: Doctest.hs
+  other-modules:
+      Paths_lookup
+  hs-source-dirs:
+      test/doctest
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , doctest
+    , exceptions
     , lookup
     , optparse-applicative
     , split
@@ -67,7 +83,7 @@ test-suite lookup-test
       LookupIPSpec
       ParseIPSpec
   hs-source-dirs:
-      test
+      test/specprop
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5

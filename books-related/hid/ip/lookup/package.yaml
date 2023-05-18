@@ -25,7 +25,6 @@ dependencies:
 - text
 - split
 - optparse-applicative
-- hedgehog
 
 
 ghc-options:
@@ -56,7 +55,7 @@ executables:
 tests:
   lookup-test:
     main:                Spec.hs
-    source-dirs:         test
+    source-dirs:         test/specprop
     other-modules:
       - LookupIPSpec
       - ParseIPSpec
@@ -70,4 +69,15 @@ tests:
     - hspec
     - tasty-hspec
     - tasty-hedgehog
-
+    - hedgehog
+  lookup-doctest:
+    main:                Doctest.hs
+    source-dirs:         test/doctest
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - lookup
+    - doctest
+    

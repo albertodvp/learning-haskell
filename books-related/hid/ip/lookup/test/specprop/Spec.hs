@@ -1,3 +1,4 @@
+import           GenIP
 import           LookupIPSpec
 import           ParseIPSpec
 import           Test.Tasty
@@ -8,5 +9,8 @@ main = do
            [ parseIPSpecs,
              lookupIPSpecs
            ]
-  defaultMain (testGroup "All Tests" [testGroup "Specs" specs])
+  defaultMain (testGroup "All Tests" [
+                  testGroup "Specs" specs
+                  , testGroup "Properties" props
+                  ])
 
