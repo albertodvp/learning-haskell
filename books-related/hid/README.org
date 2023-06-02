@@ -1,2 +1,65 @@
 * Haskell In Depth
 Notes and source code collected and produced while studying [[https://www.manning.com/books/haskell-in-depth][the book]]
+
+** Part 1. Core Haskell
+*** 1 Functions and typesfree
+- Structure programs clearly with types, pure functions and I/O actions
+- Use the ~Text~ type for processing textual information instead of ~String~
+- Enable the ~OverloadedStrings~ extension to make it more convenient to use string literals as ~Text~ (or other) values. 
+- `fmt` is a good library for formatting
+*** 2 Type classes
+- Type classes make code more generic and allows to abstract common operations
+- Instance derivation can be handy to make the code smaller
+- Do not reinvent the wheel (e.g. use ~Semigroup~, ~Monoid~, ~Foldable~)
+- Use ~Foldable~ and ~Traversable~ to change underlying data structures easily and to achieve better performance when needed
+*** 3 Developing an application: Stock quotes
+- Use the ~time~ package whenever processing dates and times.
+- Drawing chars is easy with the ~Chart~ package
+- ~cassava~ package is usefull for parsing CSV files
+- Use ~optparse-applicative~ package for parsing command-line applications
+** Part 2. Introduction to application design
+*** 4 Haskell development with modules, packages, and projects
+- There is no Cabal hell anymore: pick and use either ~cabal~ or ~stack~ and get things done in all cases
+- Custom preludes may be very usefull
+*** 5 Monads as practical functionality providers
+- ~FunctionalDependencies~ extension: used to constrain parameters of type classes. 
+In ~Monad m => MonadReader r m | m -> r~,  ~m -> r~ is the functional dependencies. It means that, when I implement ~m~ I "know" ~r~, I can get an ~r~ from inside ~m~.
+It's a promise that if we write an instance ~MonadReader r m~ we cannot write another instance of ~MonadReader r' m~.
+It solves ambiguity, now /type families/ are used for achieving the same things (even though, TF are less potent)
+- ~NamedFieldPuns~ extension: when writing records, it's common to write a pattern that binds a variable with the same name as a record field. You can write ~let a = 1 in C {a}~ instead of ~let a = 1 in C {a = a}~
+- ~RecordWildCards~ extension: for records with many fields, it can be tiresome to write out each field individually in a record pattern. You can write ~f (C {a = 1, ..}) = b + c + d~ instead of ~f (C {a = 1, b = b, c = c, d = d}) = b + c + d~
+- A ~IORef~ is a mutable reference in the IO monad
+- the ~directory~ package provides a bsic set of operations for manipulating files and directories
+- The most common monad interfaces are ~Reader~, ~Writer~, ~State~, ~ST~, ~RWS~
+- A ~Bifunctor~ is a type constructor that takes two type argument and is a functor in both argument.
+*** 6 Structuring programs with monad transformers
+- MonadFail
+- Alternative (guard)
+- InstanceSig
+- In general, lifting means delegating the job further along the stack
+- MonadPlus
+- MonadIO
+- transformets, mrtl, monads-tf
+- coerce
+- IdentityT allows to trasform a simple monad to a monad transformet
+- AccumT, accumulates data with the ability to read teh current value at any time during the comutation
+- ExceptT, exits a computation by generating exceptiosn with the full imnformation about the current context
+- MaybeT, exists withou producitn a result
+- ReaderT implement access to a redo onlyu environemtn
+- Implements read/write access to state value
+- WriterT logs data in the form of appending element ot a moniod
+- RWST, combines riderT writert statet
+- order of transformes in a stack?
+** Part 3. Quality assurance
+*** 7 Error handling and logging
+*** 8 Writing tests
+*** 9 Haskell data and code at run time
+*** 10 Benchmarking and profiling
+** Part 4. Advanced Haskell
+*** 11 Type system advances
+*** 12 Metaprogramming in Haskell
+*** 13 More about types
+** Part 5. Haskell toolkit
+*** 14 Data-processing pipelines
+*** 15 Working with relational databases
+*** 16 Concurrency
