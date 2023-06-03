@@ -61,11 +61,42 @@ It solves ambiguity, now /type families/ are used for achieving the same things 
   - ~RWST~ combines ~ReaderT~, ~WriterT~, ~StateT~
 ** Part 3. Quality assurance
 *** 7 Error handling and logging
+There are 2 classes of exceptions.
+- Exceptions implemented as library: everything is done programmatically by programmers themselves (or library they use). An exable is ~ExceptT~
+  - ~Monad m => MonadError e m | m -> e~. the strategy of compining computations that can throw exceptions by bypassing bound functions from the point an exception is thrown to the point it is handled
+- Exceptions supported by GHC runtime system (extensible exceptions). GHC runtime exceptiosn are defined by the ~Control.Exception~ module from the ~base~ package.
+  - The main rule is that an exception can be thrown anywhere (including in pure code), but it can be caught only in IO computation
+~Monad m => MonadThrow m~: a class for monads in which exceptions may be thrown
+
+- It's convenient to think about Exception-handling startegies, here are somes:
+  - IGNORE
+  - THROW
+  - RETHROW
+  - DEFAULT
+  - PRINT, STOP
+  - PRINT, CONTINUE
+  - PRINT, REPEATN
 *** 8 Writing tests
+- Unit testing works by specifying test input data for functions and checking the results against given correct output
+- Poperty testing works by checking functions and their combinations agains a large set of randomly generated data
+- Golden testing is checking a program output against presumably correct "golden" output
 *** 9 Haskell data and code at run time
+TODO
 *** 10 Benchmarking and profiling
+TODO
 ** Part 4. Advanced Haskell
 *** 11 Type system advances
+- *Terms*: values or expression that can be evaluated ~42~, ~"Hello, world!"~
+- *Types*: classify terms and specify their nature or category. Each term in Haskell has a correspongin type. The type define the range of values a term can have and the operations that can be performed on it. Types are used for type safety: the compiler checks that terms are used consistently and correctly according their types.
+- *Kinds*: classify types in a similiar way that types claffify terms. Determines the nature of types.
+- Interesting exceptions:  
+  - ~NoStarIsType~: disable the default ~StarIsType~ which replaces the kind ~Type~ with ~*~
+  - ~ExplicitForAll~: the ~forall~ keyword is implicit in all the Haskell types with type variable. This allows to explicitly use the keyword
+  - ~ScopedTypeVariables~: enable lexical scoping of type variables explicitly introduced with ~forall~
+  - ~PolyKinds~: allows kind polymorphic types
+  - ~DataKinds~
+  - ~TypeApplication~
+- 
 *** 12 Metaprogramming in Haskell
 - coerce
 *** 13 More about types
