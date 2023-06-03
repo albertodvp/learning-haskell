@@ -33,23 +33,32 @@ It solves ambiguity, now /type families/ are used for achieving the same things 
 - The most common monad interfaces are ~Reader~, ~Writer~, ~State~, ~ST~, ~RWS~
 - A ~Bifunctor~ is a type constructor that takes two type argument and is a functor in both argument.
 *** 6 Structuring programs with monad transformers
-- MonadFail
-- Alternative (guard)
-- InstanceSig
-- In general, lifting means delegating the job further along the stack
-- MonadPlus
-- MonadIO
-- transformets, mrtl, monads-tf
-- coerce
-- IdentityT allows to trasform a simple monad to a monad transformet
-- AccumT, accumulates data with the ability to read teh current value at any time during the comutation
-- ExceptT, exits a computation by generating exceptiosn with the full imnformation about the current context
-- MaybeT, exists withou producitn a result
-- ReaderT implement access to a redo onlyu environemtn
-- Implements read/write access to state value
-- WriterT logs data in the form of appending element ot a moniod
-- RWST, combines riderT writert statet
-- order of transformes in a stack?
+- Interesting calsses:
+  - ~Monad m => MonadFail m~: when a value si bound in do-notation, the pattern on the left hand side of ~<-~ might not match, this class provices a function to recover.
+  - ~Applicative f => Alternative f~: a monoid of applicative functors
+  - ~(Alternative m, Monad m) => MonadPlus m~: monads that support choise and failure.
+  - ~Monad m => MonadIO m~: monads in which IO computation may be embedded.
+- Interesting extensions:
+  - ~InstanceSig~: enables explicit type signatures as part of typecalss ~instance~ decalration
+- A monad transformer allows the composition of monads.
+- In general, in the context of monad transformers, lifting means *delegating the job further along the stack*
+- Order of monads in a transformers stack.
+  1. Consider the desired behavour. For example if you want exceptions to propagate through all the layers, you would tipically place the exception-handling transformers closert to the top of the stack.
+  2. Handle the outermost effect first. The transformers responsible for the effects closest to the baes monad are placed at the top of the stack. This allows subsequent transformers to build upon and interact with the computations involving the outermost effect
+
+- Most common transformer packages:
+  - ~transformers~: portable library of functor and monad transformers
+  - ~mtl~: extends the package above, uses functional dependencies for generic lifting of monadic actions
+  - ~monads-tf~: monad classes using type families, with instances for various monad transformers.
+- Some interesting monad transformers:
+  - ~IdentityT~ allows to trasform a simple monad to a monad transformer
+  - ~AccumT~ accumulates data with the ability to read the current value at any time during the computation
+  - ~ExceptT~ exits a computation by generating exceptions with the full information about the current context
+  - ~MaybeT~ exists without the production of a result
+  - ~ReaderT~ implements access to a read only environment
+  - ~Implements~ read/write access to state value
+  - ~WriterT~ logs data in the form of appending element to a moniod
+  - ~RWST~ combines ~ReaderT~, ~WriterT~, ~StateT~
 ** Part 3. Quality assurance
 *** 7 Error handling and logging
 *** 8 Writing tests
@@ -58,6 +67,7 @@ It solves ambiguity, now /type families/ are used for achieving the same things 
 ** Part 4. Advanced Haskell
 *** 11 Type system advances
 *** 12 Metaprogramming in Haskell
+- coerce
 *** 13 More about types
 ** Part 5. Haskell toolkit
 *** 14 Data-processing pipelines
